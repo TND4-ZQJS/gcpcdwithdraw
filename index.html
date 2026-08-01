@@ -1,0 +1,1552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Investment-linked Request Form (Fund Withdrawal)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --accent:#007aff; --muted:#666; --line:#e9e9ee;
+  }
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;margin:18px;background:var(--bg);color:#111}
+  main{max-width:980px;margin:0 auto;background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.06)}
+  h1{margin:15px 0 35px 0;font-size:1.50rem}
+  .section{background:#fbfbfd;border:1px solid #eee;padding:14px;border-radius:10px;margin:12px 0}
+  .section h2{margin:0 0 10px 0;font-size:1.05rem}
+  label{display:block;margin:8px 0;font-size:0.95rem}
+  input[type=text],input[type=email],input[type=number],input[type=tel],select,textarea{
+    width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin-top:6px;font-size:1rem;background:#fff
+  }
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+  .muted{color:var(--muted);font-size:0.85rem}
+  button {background: var(--accent);color: #fff;border: 0;padding: 10px 16px;border-radius: 10px;cursor: pointer;font-weight: 500;font-size: 0.95rem;transition: background 0.15s;}
+  button:hover {background: #0077ed;}
+  button.secondary { background: #999; }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: #333; }
+  button.ghost:hover { background: rgba(0,0,0,0.02); }
+  .actions{display:flex;gap:12px;align-items:center}
+
+  /* Styling for Fund Options*/
+  .fund-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .remove-btn {background:transparent;border:1px solid var(--line);color:#333;border-radius:8px;padding:6px 10px;font-size:0.9rem}
+  .add-btn { background: #007bff; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; } 
+
+  /* Styling for locked/copied fields */
+  input[readonly] {background: #f2f2f2;color: #555;cursor: not-allowed;border: 1px solid #ddd; outline: none; opacity: 0.8;}
+
+  .grid-2 {display: grid;grid-template-columns: repeat(2, 1fr);gap: 12px;}
+  @media (max-width: 600px) {.grid-2 {grid-template-columns: 1fr;}}
+
+  /* Generate PDF Page */
+  .action-center {max-width: 800px;margin: 40px auto;padding: 0 20px;box-sizing: border-box;}
+  .pdf-grid {display: flex;flex-direction: column;gap: 12px;}
+  .doc-row {display: flex;align-items: center;justify-content: space-between;background: #ffffff;padding: 16px;border-radius: 14px;border: 1px solid #d2d2d7box-sizing: border-box;}
+
+.doc-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-title { 
+  font-size: 15px; 
+  color: #1d1d1f; 
+}
+
+.doc-sub { 
+  font-size: 12px; 
+  color: #86868b; 
+}
+
+/* Generate PDF Button Styles - Fixed Font & Padding matching Parent */
+.btn-primary,
+.btn-secondary {
+  font-family: inherit;
+  font-size: 1rem;       /* Restores 16px text scale from parent filler */
+  padding: 10px 18px;    /* Restores full padding size */
+  border-radius: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.btn-primary { 
+  background: #0071e3; 
+  color: #fff; 
+  border: none; 
+}
+
+.btn-secondary { 
+  background: #f5f5f7; 
+  color: #0071e3; 
+  border: none; 
+  margin-right: 4px; 
+}
+
+.btn-secondary:focus {
+  outline: none;
+  background: #f5f5f7;
+  color: #0071e3;
+}
+
+.btn-secondary:hover {
+  background: #ebebed;
+}
+
+.btn-secondary:active {
+  background: #e8e8ed; 
+  transition: 0.1s;
+}
+
+.reset-container {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #d2d2d7;
+}
+
+.btn-reset { 
+  font-family: inherit;
+  font-size: 1rem;
+  background: none; 
+  color: #ff3b30; 
+  border: 1px solid #ff3b30; 
+  padding: 12px 24px; 
+  border-radius: 22px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: 0.2s; 
+  width: 100%; 
+  max-width: 300px; 
+}
+
+/* MOBILE ALIGNMENT FIX */
+@media (max-width: 600px) {
+  .doc-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .actions button {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+   .btn-set-today {
+  margin-left: 8px;
+  padding: 4px 10px !important;
+  font-size: 0.75rem !important;
+  height: auto !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: transparent;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+} 
+
+   /* ---------- WIZARD CSS ---------- */ 
+  /* Progress Tracker Container */
+.step-indicator {display: flex;justify-content: space-between;margin-bottom: 30px;background: #fff;padding: 15px;border-radius: 12px;border: 1px solid var(--line);overflow-x: auto;gap: 10px;}
+
+ /* Individual Step Tab */
+.step {flex: 1;text-align: center;font-size: 0.8rem;color: #888;cursor: pointer;transition: all 0.2s ease-in-out;padding: 8px;border-radius: 8px;min-width: 90px;display: flex;flex-direction: column;align-items: center;}
+
+/* Hover effect for Expert users jumping around */
+.step:hover {background: #f0f7ff;color: var(--accent);}
+.step.active {color: var(--accent);font-weight: 600;background: #f0f7ff;}
+.step-num {width: 28px;height: 28px;line-height: 28px;border-radius: 50%;background: #eee;display: block;margin-bottom: 6px;font-size: 0.85rem;transition: background 0.3s;}
+.step.active .step-num {background: var(--accent);color: #fff;}
+
+/* Wizard Step Visibility */
+.wizard-step {display: none;}
+.wizard-step.active {display: block;animation: slideIn 0.3s ease-out;}
+
+@keyframes slideIn {from { opacity: 0; transform: translateX(10px); }to { opacity: 1; transform: translateX(0); }}
+
+/* Navigation Footer */
+.wizard-actions {display: flex;justify-content: space-between;margin-top: 30px;padding: 20px 0;border-top: 1px solid var(--line);}
+
+
+  /* Signature preview tiles */
+  .sig-preview{
+    width:100%; height:150px; border:1px dashed #bbb; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; background:#fff; cursor:pointer; position:relative;
+  }
+  .sig-preview img{ max-width:100%; max-height:100%; object-fit:contain; }
+  .sig-preview span{ color:#999; }
+
+  /* Signature Modal */
+  .sig-modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000; }
+  .sig-modal .box{
+    width:min(560px, 92vw); background:#fff; margin:6vh auto; padding:14px; border-radius:12px;
+    box-shadow:0 18px 50px rgba(0,0,0,.25)
+  }
+  .sig-modal h3{ margin:0 0 8px 0; }
+  #sigCanvas{ width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:10px; touch-action:none }
+  .sig-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
+  
+  /* Save indicator */
+  #saveStatus{
+    position:fixed; bottom:12px; right:12px; background:var(--accent); color:#fff;
+    padding:6px 10px; border-radius:8px; font-size:0.85rem; opacity:0; transition:opacity .25s;
+  }
+
+  @media (max-width:900px){ .header-grid{grid-template-columns:1fr} }
+  @media (max-width:720px){ .policy-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<main>
+  <h1>Investment-linked Partial Withdrawal Form</h1>
+
+  <!-- Progress Tracker -->
+  <div class="step-indicator" id="stepIndicator">
+    <div class="step active"><span class="step-num">1</span>Policy</div>
+    <div class="step"><span class="step-num">2</span>Person</div>
+    <div class="step"><span class="step-num">3</span>Withdrawal</div>
+    <div class="step"><span class="step-num">4</span>Transfer</div>
+    <div class="step"><span class="step-num">5</span>E Banking</div>
+    <div class="step"><span class="step-num">6</span>Sign</div>
+    <div class="step"><span class="step-num">7</span>Generate</div>
+  </div>
+  <!-- (END) Progress Tracker -->
+
+    <div class="wizard-step active"><!-- STEP 1: Policy -->
+    <section class="section">
+    <h2>Policy Details</h2>
+
+    <div class="row">
+    <label style="flex:1">Policy No.
+      <input id="ILWD_PolicyNo" type="text" class="persist" placeholder="Enter Policy No.">
+    </label>
+    </div>
+</section>
+
+    </div> <!-- (END) STEP 1: Policy -->
+
+  <div class="wizard-step"> <!-- Step 2: Person details -->
+   <section class="section">
+     <h2>Policy Owner Details</h2>
+
+    <div class="row">
+    <label style="flex:1">Policy Owner
+      <input id="ILWD_PO_Name" type="text" class="persist" placeholder="Enter Name">
+    </label>
+    </div>
+     
+ <div class="row">
+  <label style="flex:1">NIRC/Passport No.
+      <input id="ILWD_PO_NIRC" type="text" class="persist" placeholder="Enter NIRC/Passport No.">
+    </label>
+
+  <label style="flex:1">Mobile No.
+      <input id="ILWD_PO_Mobile" type="text" class="persist" placeholder="Enter Mobile No.">
+  </label> 
+</div> 
+      </section>
+
+  <!-- Insured details -->
+  <section class="section">
+    <h2>Insured Details</h2>
+
+       <div class="row">
+  <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
+    <input id="ILWD_Insured_is_PO" type="checkbox" class="persist">
+    <span style="font-weight:500; color:var(--accent);">Insured is also Policy Owner</span>
+  </label>
+     </div>
+  
+    <div class="row">
+    <label style="flex:1">Proposed Life Insured / Insured
+      <input id="ILWD_Insured_Name" type="text" class="persist" placeholder="Enter Name">
+    </label>
+    </div>
+     
+      </section>
+
+  <!-- Witness details -->
+    <section class="section">
+      <h2>Witness Details</h2>
+      
+    <div class="row">
+    <label style="flex:1">Witness
+      <input id="ILWD_Witness_Name" type="text" class="persist" placeholder="Enter Name">
+    </label>
+    </div>
+
+     <div class="row">
+    <label style="flex:1">NIRC/Passport No.
+      <input id="ILWD_Witness_NIRC" type="text" class="persist" placeholder="Enter Name">
+    </label>
+
+      <label style="flex:1">Mobile No.
+      <input id="ILWD_Witness_Mobile" type="text" class="persist">
+  </label>    
+    </div>
+
+    </section>
+
+    <!-- Trustee/Nominee details -->
+    <section class="section">
+      <h2>Trustee/Nominee Details</h2>
+      
+    <div class="row">
+    <label style="flex:1">Trustee/Nominee
+      <input id="ILWD_Trustee_Name" type="text" class="persist" placeholder="Enter Name">
+    </label>
+    </div>
+
+     <div class="row">
+    <label style="flex:1">NIRC/Passport No.
+      <input id="ILWD_Trustee_NIRC" type="text" class="persist" placeholder="Enter NIRC/Passport no.">
+    </label>
+
+    </div>
+
+    </section>
+  </div> <!-- (END) STEP 2: Person -->
+
+  <div class="wizard-step"><!-- Step 3: Reason of Wtihdrawal -->
+  <section class="section">
+   <h2>Partial Withdrawal Details</h2>
+    
+    <div class="row">
+      <label style="flex:1">Reason of Withdrawing
+      <select id="ILWD_Reason" class="persist">
+          <option value="">-- Select Reason --</option>
+          <option>For Personal Financial Needs</option>
+          <option>For Other Investment Purpose</option>
+          <option>To be transferred to other policy</option>
+      </select>
+    </label>  
+    </div>  
+
+    <div class="row">
+      <label style="flex:1">Withdrawal Option:
+        <select id="ILWD_WithdrawalOption" class="persist">
+          <option value="Amount">Amount (RM)</option>
+          <option value="Units">Units</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="fundsContainer"></div>
+
+    <div class="row">
+      <button type="button" id="addFundBtn" class="add-btn">+ Add Fund</button>
+    </div>
+  </section>
+  </div><!-- (END) STEP 3: Withdrawal -->
+    
+
+ <div class="wizard-step"> <!-- Step 4: Transfer to other policy -->
+  <section class="section">
+
+     <div class="row">
+  <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
+    <input id="Trf_to_Other_Policy_CB" type="checkbox" class="persist">
+    <span style="font-weight:500; color:var(--accent);">(Tick if) Withdrawal to be Transferred to Other Policy</span>
+  </label>
+     </div>
+
+    
+    <section id="Trf_to_Other_Policy" style="display:none;">
+    <div class="row"><h2>Transfer to Other Policy</h2><small class="muted">(After Transfer, (any)Balance to be credited into my bank account)</small></div>
+
+    <div class="row">
+    <label style="flex:1">Transfer the Partial Withdrawal amount
+      <input id="ILWD_Trf_Amount" type="text" class="persist" placeholder="Enter Amount (RM)">
+    </label>
+      
+    <label style="flex:1">to Policy No.
+      <input id="ILWD_Trf_PolicyNo" type="text" class="persist" placeholder="Enter Policy No.">
+    </label>
+    </div>
+
+    <div class="row">
+    <label>For the purpose of:</label>
+    </div>  
+    
+<div class="grid-2">
+  <div>
+    <label class="inline"><input id="ILWD_Trf_FYPNewB" class="persist" type="checkbox">First year premuim for new application</label>
+    <input id="ILWD_Trf_FYPNewB_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+  
+  <div>
+    <label class="inline"><input id="ILWD_Trf_Premium" class="persist" type="checkbox">Premium</label>
+    <input id="ILWD_Trf_Premium_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+  
+  <div>
+    <label class="inline"><input id="ILWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
+    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+  
+  <div>
+    <label class="inline"><input id="ILWD_Trf_Loan" class="persist" type="checkbox">Policy Loan repayment</label>
+    <input id="ILWD_Trf_Loan_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+  
+  <div>
+    <label class="inline"><input id="ILWD_Trf_APL" class="persist" type="checkbox">Automatic Premium Loan repayment</label>
+    <input id="ILWD_Trf_APL_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+</div>
+  
+   </section>
+  </section>
+</div> <!-- (END) STEP 4: Teansfer -->
+
+  <div class="wizard-step"> <!-- Step 5: E Banking -->
+  <section id="UserOption" class="section">
+  <h2>E Banking Details</h2>
+
+   <div class="row">
+      <label style="flex:1">Account Holder Name<input id="ILWD_EBank_Name" class="persist" type="text" placeholder="Enter name">
+      </label>
+   </div>
+
+   <div class="row">
+      <label style="flex:1">New IC/Old IC/Passport No/Co. Registration No. (as per bank’s records)
+        <input id="ILWD_EBank_NIRC" class="persist" type="text" placeholder="Entee NIRC/Passport no.">
+      </label>
+   </div>
+
+   <div class="row">
+      <label style="flex:1">Bank Account No.
+        <input id="ILWD_EBank_AccNo" class="persist" type="text" placeholder="Enter no.">
+      </label>
+   </div>
+
+   <div class="row">
+      <label style="flex:1">Name of Bank
+        <select id="ILWD_EBank_Bank" class="persist">
+          <option value="">-- Select Bank --</option>
+          <option value="Maybank">Maybank</option>
+          <option value="CIMB Bank">CIMB Bank</option>
+          <option value="Public Bank">Public Bank</option>
+          <option value="RHB Bank">RHB Bank</option>
+          <option value="Hong Leong Bank">Hong Leong Bank</option>
+          <option value="AmBank">AmBank</option>
+          <option value="UOB Bank">UOB Bank</option>
+          <option value="OCBC Bank">OCBC Bank</option>
+          <option value="HSBC Bank">HSBC Bank</option>
+          <option value="Standard Chartered">Standard Chartered</option>
+          <option value="Alliance Bank">Alliance Bank</option>
+          <option value="Affin Bank">Affin Bank</option>
+          <option value="Citibank">Citibank</option>
+          <option value="Bank Rakyat">Bank Rakyat</option>
+          <option value="Bank Islam">Bank Islam</option>
+          <option value="Bank Muamalat">Bank Muamalat</option>
+        </select>
+      </label>
+    </div>
+
+    <section class="section">
+      <div class="row"><label>Bank Account Type</label></div>
+      <div class="grid-2">
+          <label class="inline"><input id="ILWD_EBank_Conventional" class="persist" name="Accounttype" type="radio"> Conventional</label>
+          <label class="inline"><input id="ILWD_EBank_Islamic" class="persist" name="Accounttype" type="radio"> Islamic</label>
+      </div>
+    </section>
+  </section>  
+  </div><!-- (END) STEP 5: E Banking -->
+
+<div class="wizard-step"> <!-- Step 6: Signature -->
+<section class="section">
+  <h2>Signature Details</h2>
+
+  <div class="row">
+    <label style="flex:1">Signed at (State)
+      <select id="ILWD_Signed_State" class="persist">
+        <option value="">-- Select State --</option>
+        <option>SELANGOR</option><option>K.LUMPUR</option><option>MELAKA</option><option>JOHOR</option>
+        <option>N.SEMBILAN</option><option>PENANG</option><option>PERAK</option><option>SABAH</option>
+        <option>SARAWAK</option><option>KELANTAN</option><option>PERLIS</option><option>T'GANU</option>
+        <option>PAHANG</option><option>KEDAH</option>
+      </select>
+    </label>
+  </div>
+  
+  <div class="row">
+    <label style="flex:1">Day
+      <select id="ILWD_Signed_Day" class="persist">
+        <option value="">-- Day (DD) --</option>
+        <option>01</option><option>02</option><option>03</option><option>04</option>
+        <option>05</option><option>06</option><option>07</option><option>08</option>
+        <option>09</option><option>10</option><option>11</option><option>12</option>
+        <option>13</option><option>14</option><option>15</option><option>16</option>
+        <option>17</option><option>18</option><option>19</option><option>20</option>
+        <option>21</option><option>22</option><option>23</option><option>24</option>
+        <option>25</option><option>26</option><option>27</option><option>28</option>
+        <option>29</option><option>30</option><option>31</option>
+      </select>
+    </label>
+    <label style="flex:1">Month
+      <select id="ILWD_Signed_Month" class="persist">
+        <option value="">-- Month --</option>
+        <option>JANUARY</option><option>FEBRUARY</option><option>MARCH</option><option>APRIL</option>
+        <option>MAY</option><option>JUNE</option><option>JULY</option><option>AUGUST</option>
+        <option>SEPTEMBER</option><option>OCTOBER</option><option>NOVEMBER</option><option>DECEMBER</option>
+      </select>
+    </label>
+    <label style="flex:1">Year
+      <select id="ILWD_Signed_Year" class="persist">
+        <option value="">-- Year (YYYY) --</option>
+        <option>2025</option><option>2026</option>
+      </select>
+    </label>
+  </div>
+  
+    <div class="row">
+  <button type="button" class="btn-set-today ghost" onclick="setSignedDateToday()">Today</button>
+</div>
+  
+</section>
+
+  <!-- SECTION: Policy Owner Signature -->
+  <section class="section" data-sig-role="owner" data-sig-title="Sign: Policy Owner">
+    <h2>Policy Owner Signature</h2>
+<div class="row">
+  <label style="flex:1">Name: 
+    <span id="ILWD_EBank_Name_Display" style="font-weight: 600;">-</span>
+  </label>
+</div>
+
+
+
+    <div class="sig-preview" data-sig-preview>
+      <span>Tap to Sign (Policy Owner)</span>
+    </div>
+    <div class="row">
+      <button class="secondary" type="button" data-sig-clear>Clear Signature</button>
+    </div>
+  </section>
+
+  <!-- SECTION: Witness Signature -->
+  <section class="section" data-sig-role="witness" data-sig-title="Sign: Witness">
+    <h3>Witness Signature</h3>
+<div class="row">
+  <label style="flex:1">Name: 
+    <span id="ILWD_Witness_Name_Display" style="font-weight: 600;">-</span>
+  </label>
+</div>
+
+    <div class="sig-preview" data-sig-preview>
+      <span>Tap to Sign (Witness)</span>
+    </div>  
+    <div class="row">
+      <button class="secondary" type="button" data-sig-clear>Clear Signature</button>
+    </div>
+  </section>
+
+  <!-- SECTION: Trustee Signature -->
+  <section class="section" data-sig-role="trustee" data-sig-title="Sign: Trustee">
+    <h3>Trustee Signature</h3>
+<div class="row">
+  <label style="flex:1">Name: 
+    <span id="ILWD_Trustee_Name_Display" style="font-weight: 600;">-</span>
+  </label>
+</div>
+
+    <div class="sig-preview" data-sig-preview>
+      <span>Tap to Sign (Trustee)</span>
+    </div>  
+    <div class="row">
+      <button class="secondary" type="button" data-sig-clear>Clear Signature</button>
+    </div>
+  </section>
+</div><!-- (END) STEP 6: E Banking -->
+
+<div class="wizard-step"><!-- Step 7: Generate -->
+<section class="section">
+  <h2>Generate PDF / Reset Form</h2>
+  <div class="action-center">
+    
+    <!-- Restored pdf-grid wrapper here -->
+    <div class="pdf-grid">
+      <div class="doc-row">
+        <div class="doc-info">
+          <b class="doc-title">Investment-linked Partial Withdrawal Form</b>
+          <span class="doc-sub">LF4069 · 3 Pages (email to mypos@manulife.my )</span>
+        </div>
+        <div class="actions">
+          <button onclick="fillPDF('investment-link-partial-withdrawal_LF4069_21102024_fillable.pdf', 'view')" class="btn-secondary">View</button>
+          <button onclick="fillPDF('investment-link-partial-withdrawal_LF4069_21102024_fillable.pdf', 'download')" class="btn-primary">Download</button>
+        </div>
+      </div>
+    </div> <!-- Close pdf-grid -->
+
+    <div class="reset-container">
+      <button onclick="resetAllData()" class="btn-reset">Reset All Fields & Signatures</button>
+    </div>
+
+  </div> <!-- Close action-center -->
+</section>
+</div><!-- (END) STEP 7: Generate -->
+
+  <!-- NAVIGATION BUTTONS -->
+    <div class="wizard-actions">
+      <button type="button" id="prevBtn" class="ghost" onclick="changeStep(-1)" style="visibility:hidden;">Previous</button>
+      <button type="button" id="nextBtn" onclick="changeStep(1)">Next Step</button>
+    </div>
+  
+</main>
+
+<!-- Signature Modal -->
+<div id="sigModal" class="sig-modal" aria-hidden="true">
+  <div class="box">
+    <h3 id="sigModalTitle">Draw Signature</h3>
+    <div class="canvas-wrapper">
+      <canvas id="sigCanvas"></canvas>
+    </div>
+    <div class="sig-actions">
+      <button id="sigDone" type="button">Done</button>
+      <button id="sigClear" type="button" class="ghost">Clear</button>
+      <button id="sigCancel" type="button" class="secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="saveStatus">Saved</div>
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>
+<script>
+/* ---------- CONFIG ---------- */
+const PDF_FILENAME = "investment-link-partial-withdrawal_LF4069_21102024_fillable.pdf";
+const FORM_ID = "ilpwd";
+
+/* ---------- DOM Helpers ---------- */
+const $ = (id) => document.getElementById(id);
+
+function safeSetText(form, name, text){
+  try{ form.getTextField(name).setText(String(text || "")); } catch(e){ }
+}
+function safeCheck(form, name, checked){
+  try{ const cb = form.getCheckBox(name); if (checked) cb.check(); else cb.uncheck(); } catch(e){ }
+}
+
+/* ---------- Save Indicator & Persistence ---------- */
+const saveStatusEl = $("saveStatus");
+function showSaveStatus(){
+  saveStatusEl.style.opacity = '1';
+  clearTimeout(saveStatusEl._timer);
+  saveStatusEl._timer = setTimeout(()=> saveStatusEl.style.opacity = '0', 1200);
+}
+
+function saveElValue(el){
+  if(!el || !el.id) return;
+  if(el.type === 'checkbox' || el.type === 'radio'){
+    localStorage.setItem(el.id, el.checked);
+  } else {
+    localStorage.setItem(el.id, el.value);
+  }
+  showSaveStatus();
+}
+
+function autoBindSave(el){
+  const saved = localStorage.getItem(el.id);
+  if(saved !== null){
+    if(el.type === 'checkbox' || el.type === 'radio') el.checked = (saved === 'true');
+    else el.value = saved;
+  }
+  el.addEventListener((el.type === 'checkbox' || el.type === 'radio') ? 'change' : 'input', ()=> saveElValue(el));
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("input, select, textarea").forEach(el => {
+    if (!el.id) return;
+    autoBindSave(el);
+
+    if (el.type === "text" || el.tagName === "TEXTAREA") {
+      if (!el.id.toLowerCase().includes("email")) {
+        el.addEventListener("input", () => {
+          const cursor = el.selectionStart;
+          el.value = el.value.toUpperCase();
+          el.setSelectionRange(cursor, cursor);
+          saveElValue(el);
+        });
+      }
+    }
+  });
+
+  initSignatureFields();
+  loadFromLocalStorage();
+});
+
+/* ---------- Fund List Logic ---------- */
+const FUND_LIST = [
+  { key: "Managed", label: "Managed Fund", amtId: "ILWD_Managed_Amt", unitId: "ILWD_Managed_Unit" },
+  { key: "Equity", label: "Equity Fund", amtId: "ILWD_Equity_Amt", unitId: "ILWD_Equity_Unit" },
+  { key: "Income", label: "Income Fund", amtId: "ILWD_Income_Amt", unitId: "ILWD_Income_Unit" },
+  { key: "DanaEkuiti", label: "Dana Ekuiti", amtId: "ILWD_DanaEkuiti_Amt", unitId: "ILWD_DanaEkuiti_Unit" },
+  { key: "FlexiInvest", label: "FlexiInvest", amtId: "ILWD_FlexiInvest_Amt", unitId: "ILWD_FlexiInvest_Unit" },
+  { key: "China", label: "China Fund", amtId: "ILWD_China_Amt", unitId: "ILWD_China_Unit" },
+  { key: "Progress", label: "Progress Fund", amtId: "ILWD_Progress_Amt", unitId: "ILWD_Progress_Unit" },
+  { key: "Dividend", label: "Dividend Fund", amtId: "ILWD_Dividend_Amt", unitId: "ILWD_Dividend_Unit" },
+  { key: "AsiaPacReit", label: "Asia Pac REIT", amtId: "ILWD_AsiaPacReit_Amt", unitId: "ILWD_AsiaPacReit_Unit" },
+  { key: "GlobalEquity", label: "Global Equity", amtId: "ILWD_GlobalEquity_Amt", unitId: "ILWD_GlobalEquity_Unit" },
+  { key: "DanaAsia", label: "Dana Asia", amtId: "ILWD_DanaAsia_Amt", unitId: "ILWD_DanaAsia_Unit" }
+];
+
+const DEFAULT_FUND_KEY = "Equity";
+const modeSelect = $("ILWD_WithdrawalOption");
+const container = $("fundsContainer");
+const addBtn = $("addFundBtn");
+
+const STORAGE_KEY_MODE = 'ILWD_WithdrawalOption_Saved';
+const STORAGE_KEY_FUNDS = 'ILWD_WithdrawalFunds_Saved';
+
+let selectedFundKeys = new Set();
+
+function saveToLocalStorage() {
+  localStorage.setItem(STORAGE_KEY_MODE, modeSelect.value);
+  const rowsData = [];
+  container.querySelectorAll('.fund-item').forEach(row => {
+    const select = row.querySelector('.fund-select');
+    const val = row.querySelector('.fund-input').value;
+    if (select && select.value) {
+      rowsData.push({ fundKey: select.value, val });
+    }
+  });
+  localStorage.setItem(STORAGE_KEY_FUNDS, JSON.stringify(rowsData));
+  showSaveStatus();
+}
+
+function createFundRow(initialFundKey = null, initialVal = '') {
+  const availableFunds = FUND_LIST.filter(f => !selectedFundKeys.has(f.key));
+  if (!initialFundKey && availableFunds.length === 0) {
+    alert("All available funds have been added.");
+    return;
+  }
+
+  const mode = modeSelect.value;
+  const row = document.createElement('div');
+  row.className = 'row fund-item';
+
+  const select = document.createElement('select');
+  select.className = 'fund-select';
+  select.style.flex = '1';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.step = 'any';
+  input.value = initialVal;
+  input.placeholder = mode === 'Amount' ? 'Amount (RM)' : 'Units';
+  input.className = 'fund-input';
+  input.style.flex = '1';
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '✕';
+
+  let currentKey = initialFundKey || (availableFunds.some(f => f.key === DEFAULT_FUND_KEY) ? DEFAULT_FUND_KEY : availableFunds[0].key);
+
+  selectedFundKeys.add(currentKey);
+  select.dataset.selectedKey = currentKey;
+
+  select.addEventListener('change', (e) => {
+    selectedFundKeys.delete(select.dataset.selectedKey);
+    currentKey = e.target.value;
+    select.dataset.selectedKey = currentKey;
+    selectedFundKeys.add(currentKey);
+    updateAllDropdowns();
+    saveToLocalStorage();
+  });
+
+  input.addEventListener('input', saveToLocalStorage);
+
+  removeBtn.addEventListener('click', () => {
+    selectedFundKeys.delete(select.dataset.selectedKey);
+    row.remove();
+    updateAllDropdowns();
+    saveToLocalStorage();
+  });
+
+  row.appendChild(select);
+  row.appendChild(input);
+  row.appendChild(removeBtn);
+  container.appendChild(row);
+
+  updateAllDropdowns();
+  select.value = currentKey;
+}
+
+function updateAllDropdowns() {
+  container.querySelectorAll('.fund-item').forEach(row => {
+    const select = row.querySelector('.fund-select');
+    if (!select) return;
+    const currentVal = select.dataset.selectedKey || select.value;
+    select.innerHTML = '';
+    FUND_LIST.forEach(fund => {
+      if (fund.key === currentVal || !selectedFundKeys.has(fund.key)) {
+        const option = document.createElement('option');
+        option.value = fund.key;
+        option.textContent = fund.label;
+        if (fund.key === currentVal) option.selected = true;
+        select.appendChild(option);
+      }
+    });
+    select.value = currentVal;
+  });
+}
+
+modeSelect.addEventListener('change', () => {
+  const mode = modeSelect.value;
+  container.querySelectorAll('.fund-input').forEach(input => {
+    input.placeholder = mode === 'Amount' ? 'Amount (RM)' : 'Units';
+  });
+  saveToLocalStorage();
+});
+
+function loadFromLocalStorage() {
+  const savedMode = localStorage.getItem(STORAGE_KEY_MODE);
+  if (savedMode) modeSelect.value = savedMode;
+
+  const savedFundsRaw = localStorage.getItem(STORAGE_KEY_FUNDS);
+  if (savedFundsRaw) {
+    try {
+      const savedFunds = JSON.parse(savedFundsRaw);
+      if (Array.isArray(savedFunds) && savedFunds.length > 0) {
+        savedFunds.forEach(item => createFundRow(item.fundKey, item.val));
+        return;
+      }
+    } catch (e) { console.error(e); }
+  }
+  createFundRow();
+}
+
+addBtn.addEventListener('click', () => {
+  createFundRow();
+  saveToLocalStorage();
+});
+
+function getPdfFormData() {
+  const mode = modeSelect.value;
+  const pdfData = {};
+  container.querySelectorAll('.fund-item').forEach(row => {
+    const select = row.querySelector('.fund-select');
+    const val = row.querySelector('.fund-input').value;
+    if (select && select.value && val) {
+      const fundConfig = FUND_LIST.find(f => f.key === select.value);
+      if (fundConfig) {
+        pdfData[mode === 'Amount' ? fundConfig.amtId : fundConfig.unitId] = val;
+      }
+    }
+  });
+  return pdfData;
+}
+
+/* ---------- Combined PO -> E-Bank & PO -> Insured Sync Helper ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  // Elements
+  const poName    = document.getElementById("ILWD_PO_Name");
+  const poNric    = document.getElementById("ILWD_PO_NIRC");
+
+  const eBankName = document.getElementById("ILWD_EBank_Name");
+  const eBankNric = document.getElementById("ILWD_EBank_NIRC");
+
+  const insuredPOCheckbox = document.getElementById("ILWD_Insured_is_PO");
+  const insuredName        = document.getElementById("ILWD_Insured_Name");
+
+  // Helper to safely format value to Uppercase
+  const toUpper = (val) => (val || "").toUpperCase();
+
+  // Helper to update field + localStorage + save status
+  function setAndPersist(el, value) {
+    if (!el) return;
+    el.value = value;
+    localStorage.setItem(el.id, value);
+    if (typeof showSaveStatus === "function") showSaveStatus();
+  }
+
+  // Helper to clear field + remove from localStorage + save status
+  function clearAndRemovePersist(el) {
+    if (!el) return;
+    el.value = "";
+    localStorage.removeItem(el.id);
+    if (typeof showSaveStatus === "function") showSaveStatus();
+  }
+
+  /* --- 1. E-BANK SYNC (Always Locked & Synced) --- */
+  function syncEBankFromPO() {
+    if (!eBankName || !eBankNric || !poName || !poNric) return;
+    setAndPersist(eBankName, toUpper(poName.value));
+    setAndPersist(eBankNric, toUpper(poNric.value));
+  }
+
+  function lockEBankFields() {
+    if (!eBankName || !eBankNric) return;
+    eBankName.readOnly = true;
+    eBankNric.readOnly = true;
+    eBankName.classList.add("dimmed");
+    eBankNric.classList.add("dimmed");
+  }
+
+  /* --- 2. INSURED SYNC (Conditional on Checkbox) --- */
+  function syncInsuredFromPO() {
+    if (!insuredName || !poName) return;
+    setAndPersist(insuredName, toUpper(poName.value));
+  }
+
+  function clearInsuredFields() {
+    if (!insuredName) return;
+    clearAndRemovePersist(insuredName);
+  }
+
+  function setInsuredLocked(locked) {
+    if (!insuredName) return;
+    insuredName.readOnly = locked;
+    insuredName.classList.toggle("dimmed", locked);
+  }
+
+  function handleInsuredCheckboxChange() {
+    if (!insuredPOCheckbox) return;
+    
+    if (insuredPOCheckbox.checked) {
+      syncInsuredFromPO();
+      setInsuredLocked(true);
+    } else {
+      // Clear data & remove from localStorage when unchecked
+      clearInsuredFields();
+      setInsuredLocked(false);
+    }
+  }
+
+  /* --- 3. EVENT BINDINGS & INITIALIZATION --- */
+  // Lock EBank fields permanently
+  lockEBankFields();
+
+  // Live Sync on Policy Owner Typing
+  if (poName) {
+    poName.addEventListener("input", () => {
+      syncEBankFromPO();
+      if (insuredPOCheckbox && insuredPOCheckbox.checked) syncInsuredFromPO();
+    });
+  }
+
+  if (poNric) {
+    poNric.addEventListener("input", () => {
+      syncEBankFromPO();
+    });
+  }
+
+  // Checkbox Event Listener
+  if (insuredPOCheckbox) {
+    insuredPOCheckbox.addEventListener("change", handleInsuredCheckboxChange);
+  }
+
+  // Initial Sync on Page Load
+  setTimeout(() => {
+    syncEBankFromPO();
+    // Only set lock state without clearing on page startup
+    if (insuredPOCheckbox && insuredPOCheckbox.checked) {
+      syncInsuredFromPO();
+      setInsuredLocked(true);
+    } else {
+      setInsuredLocked(false);
+    }
+  }, 50);
+});
+
+/* ---------- Transfer to Policy Section & Sub-Options Engine ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const mainCB = document.getElementById("Trf_to_Other_Policy_CB");
+  const section = document.getElementById("Trf_to_Other_Policy");
+
+  // Sub-checkboxes mapped to their amount textboxes
+  const subTransferFields = [
+    { cbId: "ILWD_Trf_FYPNewB", amtId: "ILWD_Trf_FYPNewB_Amt" },
+    { cbId: "ILWD_Trf_Premium",  amtId: "ILWD_Trf_Premium_Amt" },
+    { cbId: "ILWD_Trf_TopUp",    amtId: "ILWD_Trf_TopUp_Amt" },
+    { cbId: "ILWD_Trf_Loan",     amtId: "ILWD_Trf_Loan_Amt" },
+    { cbId: "ILWD_Trf_APL",      amtId: "ILWD_Trf_APL_Amt" }
+  ];
+
+  /* --------------------------------------------------------------------------
+     1. SUB-CHECKBOX TOGGLES (Show/Hide Sub-Amount Fields)
+     -------------------------------------------------------------------------- */
+  function updateSubFieldState({ cbId, amtId }) {
+    const checkbox = document.getElementById(cbId);
+    const amtInput = document.getElementById(amtId);
+
+    if (!checkbox || !amtInput) return;
+
+    if (checkbox.checked) {
+      amtInput.style.display = "inline-block";
+    } else {
+      amtInput.style.display = "none";
+      amtInput.value = "";
+      localStorage.removeItem(amtId);
+    }
+  }
+
+  // Bind listeners for sub-checkboxes
+  subTransferFields.forEach((fieldPair) => {
+    const checkbox = document.getElementById(fieldPair.cbId);
+    if (checkbox) {
+      checkbox.addEventListener("change", () => updateSubFieldState(fieldPair));
+    }
+  });
+
+  /* --------------------------------------------------------------------------
+     2. MAIN SECTION DATA WIPER & TOGGLE
+     -------------------------------------------------------------------------- */
+  function clearEntireSectionData() {
+    if (!section) return;
+
+    // Grab all form elements within the section
+    const inputs = section.querySelectorAll("input, select, textarea");
+
+    inputs.forEach((input) => {
+      // 1. Reset DOM values
+      if (input.type === "checkbox" || input.type === "radio") {
+        input.checked = false;
+      } else {
+        input.value = "";
+      }
+
+      // 2. Re-hide sub-amount textboxes specifically
+      if (input.id.endsWith("_Amt")) {
+        input.style.display = "none";
+      }
+
+      // 3. Clear localStorage entries
+      if (input.id) {
+        localStorage.removeItem(input.id);
+      }
+    });
+
+    if (typeof showSaveStatus === "function") showSaveStatus();
+  }
+
+  function toggleMainSection() {
+    if (!mainCB || !section) return;
+
+    if (mainCB.checked) {
+      section.style.display = ""; // Show section
+      // Check sub-fields in case restored checkbox states need their textboxes visible
+      subTransferFields.forEach(updateSubFieldState);
+    } else {
+      section.style.display = "none"; // Hide section
+      clearEntireSectionData();       // Erase values and localStorage
+    }
+  }
+
+  if (mainCB) {
+    mainCB.addEventListener("change", toggleMainSection);
+  }
+
+  /* --------------------------------------------------------------------------
+     3. INITIALIZATION (Delayed for autoBindSave restoration)
+     -------------------------------------------------------------------------- */
+  setTimeout(() => {
+    // Evaluate sub-checkboxes
+    subTransferFields.forEach(updateSubFieldState);
+    // Evaluate main section visibility
+    toggleMainSection();
+  }, 50);
+});
+
+/* ---------- Signature Names Display ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const fieldMap = {
+    "ILWD_PO_Name":      "ILWD_EBank_Name_Display",
+    "ILWD_Witness_Name": "ILWD_Witness_Name_Display",
+    "ILWD_Witness_NIRC": "ILWD_Witness_NIRC_Display",
+    "ILWD_Trustee_Name": "ILWD_Trustee_Name_Display",
+    "ILWD_Trustee_NIRC": "ILWD_Trustee_NIRC_Display"
+  };
+
+  function updateDisplay(storageKey, displayId, directValue = null) {
+    const displayEl = document.getElementById(displayId);
+    if (!displayEl) return;
+
+    const sourceInput = document.getElementById(storageKey);
+    
+    // Priority:
+    // 1. Direct typed value (if from live typing event)
+    // 2. localStorage value
+    // 3. Current input DOM value
+    const savedInStorage = localStorage.getItem(storageKey);
+    const inputVal = sourceInput ? sourceInput.value : "";
+    
+    const value = (directValue !== null) 
+      ? directValue 
+      : (savedInStorage || inputVal);
+
+    displayEl.textContent = value ? value.toUpperCase() : "-";
+  }
+
+  function refreshAllDisplays() {
+    Object.entries(fieldMap).forEach(([storageKey, displayId]) => {
+      updateDisplay(storageKey, displayId);
+    });
+  }
+
+  // Bind live typing listeners to inputs
+  Object.entries(fieldMap).forEach(([storageKey, displayId]) => {
+    const sourceInput = document.getElementById(storageKey);
+    if (sourceInput) {
+      sourceInput.addEventListener("input", (e) => {
+        updateDisplay(storageKey, displayId, e.target.value);
+      });
+      // Also listen for change/restore events
+      sourceInput.addEventListener("change", () => {
+        updateDisplay(storageKey, displayId);
+      });
+    }
+  });
+
+  // 1. Immediate update
+  refreshAllDisplays();
+
+  // 2. Delayed update (wait 100ms for autoBindSave / restoration script to finish putting localStorage values into the DOM inputs)
+  setTimeout(refreshAllDisplays, 100);
+});
+
+/* ---------- Date Set Today Button ---------- */  
+function setSignedDateToday() {
+  const now = new Date();
+
+  // 1. Format Day (e.g., 5 -> "05")
+  const dayStr = String(now.getDate()).padStart(2, '0');
+
+  // 2. Format Month string matching select options
+  const monthNames = [
+    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+  ];
+  const monthStr = monthNames[now.getMonth()];
+
+  // 3. Format Year (e.g., "2026")
+  const yearStr = String(now.getFullYear());
+
+  // 4. Target elements
+  const daySelect = document.getElementById('ILWD_Signed_Day');
+  const monthSelect = document.getElementById('ILWD_Signed_Month');
+  const yearSelect = document.getElementById('ILWD_Signed_Year');
+
+  if (daySelect && monthSelect && yearSelect) {
+    // Set values
+    daySelect.value = dayStr;
+    monthSelect.value = monthStr;
+    yearSelect.value = yearStr;
+
+    // Dispatch change event to trigger local storage auto-save listeners if present
+    daySelect.dispatchEvent(new Event('change', { bubbles: true }));
+    monthSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+    // Explicitly write to localStorage if you store form fields by ID directly
+    saveToLocalStorage('ILWD_Signed_Day', dayStr);
+    saveToLocalStorage('ILWD_Signed_Month', monthStr);
+    saveToLocalStorage('ILWD_Signed_Year', yearStr);
+  }
+}
+
+// Helper function for local storage persistence
+function saveToLocalStorage(id, value) {
+  try {
+    // If you use a single object key for form data, adapt this accordingly
+    localStorage.setItem(id, value);
+    
+    // Optional: trigger your save indicator toast if you have one
+    const saveStatus = document.getElementById('saveStatus');
+    if (saveStatus) {
+      saveStatus.style.opacity = '1';
+      setTimeout(() => { saveStatus.style.opacity = '0'; }, 1500);
+    }
+  } catch (e) {
+    console.error('Failed to save to localStorage:', e);
+  }
+}
+
+
+/* ---------- Signature Engine ---------- */
+let sigTarget = null;
+const sigModal = $("sigModal");
+const sigCanvas = $("sigCanvas");
+const sigCtx = sigCanvas.getContext("2d");
+
+const signaturePad = new SignaturePad(sigCanvas, {
+  minWidth: 0.7,
+  maxWidth: 2.5,
+  penColor: "black",
+  backgroundColor: "rgba(0,0,0,0)"
+});
+
+function resizeCanvas() {
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  const storageKey = sigTarget ? `sig_${FORM_ID}_${sigTarget}` : null;
+  const savedFromStorage = storageKey ? localStorage.getItem(storageKey) : null;
+
+  sigCanvas.width = sigCanvas.offsetWidth * ratio;
+  sigCanvas.height = sigCanvas.offsetHeight * ratio;
+  sigCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  signaturePad.clear();
+
+  if (savedFromStorage) {
+    const img = new Image();
+    img.onload = () => sigCtx.drawImage(img, 0, 0, sigCanvas.offsetWidth, sigCanvas.offsetHeight);
+    img.src = savedFromStorage;
+  }
+}
+
+function openSig({ role, title }) {
+  sigTarget = role;
+  if ($("sigModalTitle")) $("sigModalTitle").textContent = title || `Sign: ${role}`;
+  sigModal.style.display = "block";
+  sigModal.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(resizeCanvas);
+}
+
+function closeSigModal() {
+  sigModal.style.display = "none";
+  sigModal.setAttribute("aria-hidden", "true");
+  sigTarget = null;
+}
+
+$("sigDone")?.addEventListener("click", () => {
+  if (!sigTarget || signaturePad.isEmpty()) return;
+
+  const dataURL = sigCanvas.toDataURL("image/png");
+  localStorage.setItem(`sig_${FORM_ID}_${sigTarget}`, dataURL);
+  
+  const block = document.querySelector(`[data-sig-role="${sigTarget}"]`);
+  const previewDiv = block?.querySelector("[data-sig-preview]");
+  if (previewDiv) {
+    previewDiv.innerHTML = `<img src="${dataURL}" style="max-height:100%; width:auto;" alt="Signature ${sigTarget}">`;
+  }
+  closeSigModal();
+});
+
+$("sigClear")?.addEventListener("click", () => signaturePad.clear());
+$("sigCancel")?.addEventListener("click", closeSigModal);
+window.addEventListener("resize", resizeCanvas);
+
+function initSignatureFields() {
+  document.querySelectorAll("[data-sig-role]").forEach((block) => {
+    const role = block.dataset.sigRole;
+    const title = block.dataset.sigTitle || `Sign: ${role}`;
+    const previewEl = block.querySelector("[data-sig-preview]");
+    const clearBtn = block.querySelector("[data-sig-clear]");
+    const defaultText = `<span>Tap to Sign (${role.charAt(0).toUpperCase() + role.slice(1)})</span>`;
+
+    previewEl?.addEventListener("click", () => openSig({ role, title }));
+
+    clearBtn?.addEventListener("click", () => {
+      localStorage.removeItem(`sig_${FORM_ID}_${role}`);
+      if (previewEl) previewEl.innerHTML = defaultText;
+    });
+
+    const saved = localStorage.getItem(`sig_${FORM_ID}_${role}`);
+    if (saved && previewEl) {
+      previewEl.innerHTML = `<img src="${saved}" style="max-height:100%; width:auto;" alt="Signature ${role}">`;
+    }
+  });
+}
+
+async function embedSignatureToPdf(pdfDoc, pageIndex, options) {
+  const { role, x, y, factor = 0.40 } = options;
+
+  // 1. Construct localStorage key matching your signature engine format
+  // Tries `sig_${FORM_ID}_${role}`, then `sig_${role}`, then `${role}`
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "ILWD";
+  const primaryKey = `sig_${formId}_${role}`;
+  
+  let sigDataUri = localStorage.getItem(primaryKey) 
+                || localStorage.getItem(`sig_${role}`) 
+                || localStorage.getItem(role);
+
+  // 2. Validate data format
+  if (!sigDataUri || !sigDataUri.startsWith("data:image/png")) {
+    console.warn(`No valid PNG signature found for role: ${role} (key tried: ${primaryKey})`);
+    return;
+  }
+
+  try {
+    // 3. Embed PNG into pdf-lib
+    const img = await pdfDoc.embedPng(sigDataUri);
+    const originalSize = img.size();
+
+    // 4. Calculate dimensions maintaining aspect ratio
+    const baseWidth = 250;
+    const aspectRatio = originalSize.width / originalSize.height;
+    const renderWidth = baseWidth * factor;
+    const renderHeight = (baseWidth / aspectRatio) * factor;
+
+    // 5. Get target page (pdf-lib pages are 0-indexed)
+    const pages = pdfDoc.getPages();
+    const targetPage = pages[pageIndex];
+
+    if (targetPage) {
+      targetPage.drawImage(img, {
+        x: x,
+        y: y,
+        width: renderWidth,
+        height: renderHeight
+      });
+    } else {
+      console.error(`Page index ${pageIndex} does not exist in the PDF template.`);
+    }
+  } catch (err) {
+    console.error(`Error embedding signature for role ${role}:`, err);
+  }
+}
+
+
+/* ---------- Generate PDF ---------- */
+async function fillPDF(templateFileName, action = 'download') {
+  // Grab action buttons to disable them during generation
+  const actionButtons = document.querySelectorAll('.actions button');
+  actionButtons.forEach(btn => btn.disabled = true);
+
+  // Helper function to safely fetch input DOM values without crashing on missing elements
+  const getValue = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.value : "";
+  };
+
+  const getChecked = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.checked : false;
+  };
+
+  try {
+    // 1. Fetch template PDF
+    const response = await fetch(templateFileName);
+    if (!response.ok) {
+      throw new Error(`Failed to load template file: ${templateFileName}`);
+    }
+    const existingPdfBytes = await response.arrayBuffer();
+
+    // 2. Load PDF document & get interactive form
+    const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+    const form = pdfDoc.getForm(); // <-- FIXED: Form initialization added
+
+    // Policy and People
+    safeSetText(form, "ILWD_PolicyNo", getValue("ILWD_PolicyNo"));
+    safeSetText(form, "ILWD_Insured_Name", getValue("ILWD_Insured_Name"));
+    safeSetText(form, "ILWD_Reason", getValue("ILWD_Reason"));
+    safeSetText(form, "ILWD_PO_NIRC", getValue("ILWD_PO_NIRC"));
+    safeSetText(form, "ILWD_PO_Name", getValue("ILWD_PO_Name"));
+    safeSetText(form, "ILWD_PO_Mobile", getValue("ILWD_PO_Mobile"));
+    safeSetText(form, "ILWD_Witness_Name", getValue("ILWD_Witness_Name"));
+    safeSetText(form, "ILWD_Witness_NIRC", getValue("ILWD_Witness_NIRC"));
+    safeSetText(form, "ILWD_Witness_Mobile", getValue("ILWD_Witness_Mobile"));
+    safeSetText(form, "ILWD_Trustee_Name", getValue("ILWD_Trustee_Name"));
+    safeSetText(form, "ILWD_Trustee_NIRC", getValue("ILWD_Trustee_NIRC"));
+
+    // Dynamic Fund Details mapping (if function exists)
+    if (typeof getPdfFormData === "function") {
+      const fundData = getPdfFormData();
+      Object.keys(fundData).forEach(fieldId => {
+        safeSetText(form, fieldId, fundData[fieldId]);
+      });
+    }
+
+    // Transfer to Other Policy
+    safeSetText(form, "ILWD_Trf_Amount", getValue("ILWD_Trf_Amount"));
+    safeSetText(form, "ILWD_Trf_PolicyNo", getValue("ILWD_Trf_PolicyNo"));
+    safeSetText(form, "ILWD_Trf_FYPNewB_Amt", getValue("ILWD_Trf_FYPNewB_Amt"));
+    safeSetText(form, "ILWD_Trf_Premium_Amt", getValue("ILWD_Trf_Premium_Amt"));
+    safeSetText(form, "ILWD_Trf_TopUp_Amt", getValue("ILWD_Trf_TopUp_Amt"));
+    safeSetText(form, "ILWD_Trf_Loan_Amt", getValue("ILWD_Trf_Loan_Amt"));
+    safeSetText(form, "ILWD_Trf_APL_Amt", getValue("ILWD_Trf_APL_Amt"));
+    safeCheck(form, "LWD_Trf_FYPNewB", getChecked("LWD_Trf_FYPNewB"));
+    safeCheck(form, "ILWD_Trf_TopUp", getChecked("ILWD_Trf_TopUp"));
+    safeCheck(form, "ILWD_Trf_Loan", getChecked("ILWD_Trf_Loan"));
+    safeCheck(form, "ILWD_Trf_APL", getChecked("ILWD_Trf_APL"));
+    safeCheck(form, "ILWD_Trf_Premium", getChecked("ILWD_Trf_Premium"));
+  
+
+    // E-Banking details
+    safeSetText(form, "ILWD_EBank_AccNo", getValue("ILWD_EBank_AccNo"));
+    safeSetText(form, "ILWD_EBank_Bank", getValue("ILWD_EBank_Bank"));
+    safeSetText(form, "ILWD_EBank_Name", getValue("ILWD_EBank_Name"));
+    safeSetText(form, "ILWD_EBank_NIRC", getValue("ILWD_EBank_NIRC"));
+    safeCheck(form, "ILWD_EBank_Conventional", getChecked("ILWD_EBank_Conventional"));
+    safeCheck(form, "ILWD_EBank_Islamic", getChecked("ILWD_EBank_Islamic"));
+    safeCheck(form, "ILWD_EBank_Checkbox", getChecked("ILWD_EBank_Checkbox"));
+
+    // Section C - Signing Details 
+    safeSetText(form, "ILWD_Signed_State", getValue("ILWD_Signed_State"));
+    safeSetText(form, "ILWD_Signed_Day", getValue("ILWD_Signed_Day"));
+    safeSetText(form, "ILWD_Signed_Month", getValue("ILWD_Signed_Month"));
+    safeSetText(form, "ILWD_Signed_Year", getValue("ILWD_Signed_Year"));
+
+    // Embed Signatures (Note: 0-indexed page numbering)
+    // For Page 1 use 0, Page 2 use 1, Page 3 use 2
+    const targetPageIndex = 2; // Adjust this index to match the target page in your PDF template
+
+    await embedSignatureToPdf(pdfDoc, targetPageIndex, { role: "owner",   x: 50,  y: 240, factor: 0.50 });
+    await embedSignatureToPdf(pdfDoc, targetPageIndex, { role: "trustee", x: 240, y: 240, factor: 0.50 });
+    await embedSignatureToPdf(pdfDoc, targetPageIndex, { role: "witness", x: 420, y: 240, factor: 0.50 });
+
+
+    // 3. Save modified PDF bytes & create Blob URL
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    // 4. Construct output filename with policy number fallback
+    const policyVal = getValue("ILWD_PolicyNo");
+    let policyNum = "NEW";
+
+    if (policyVal.trim() !== "") {
+      policyNum = policyVal.trim().replace(/[^a-z0-9]/gi, '_');
+    } else {
+      const savedPolicy = localStorage.getItem("ILWD_PolicyNo");
+      if (savedPolicy && savedPolicy.trim() !== "") {
+        policyNum = savedPolicy.trim().replace(/[^a-z0-9]/gi, '_');
+      }
+    }
+
+    const finalFileName = `${policyNum}_FundWithdrawal.pdf`;
+
+    // 5. Execute action (View in new tab OR Force Download)
+    if (action === 'view') {
+      window.open(url, '_blank');
+    } else {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = finalFileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    // 6. Clean up Blob URL memory leak after 5 seconds
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+  } catch (err) {
+    console.error("Critical PDF Error:", err);
+    alert("PDF generation failed: " + (err.message || err));
+  } finally {
+    // Re-enable action buttons
+    actionButtons.forEach(btn => btn.disabled = false);
+  }
+}
+
+
+/* ---------- RESET ALL DATA ---------- */
+// Function renamed to resetAllData to match HTML button onclick="resetAllData()"
+function resetAllData() {
+  if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) return;
+
+  // Clear localStorage
+  localStorage.clear();
+
+  // Reset inputs
+  document.querySelectorAll("input, select, textarea").forEach(el => {
+    if (el.type === "checkbox" || el.type === "radio") {
+      el.checked = false;
+    } else {
+      el.value = "";
+    }
+  });
+
+  // Re-hide conditional sections
+  const trfSection = document.getElementById("Trf_to_Other_Policy");
+  if (trfSection) trfSection.style.display = "none";
+
+  // Reset dynamic fund rows if present
+  const fundContainer = document.getElementById("fund-rows-container") || (typeof container !== "undefined" ? container : null);
+  if (fundContainer) fundContainer.innerHTML = "";
+  if (typeof selectedFundKeys !== "undefined" && selectedFundKeys.clear) selectedFundKeys.clear();
+  if (typeof createFundRow === "function") createFundRow();
+
+  // Reset Signature Previews
+  document.querySelectorAll("[data-sig-role]").forEach(block => {
+    const role = block.dataset.sigRole;
+    const previewEl = block.querySelector("[data-sig-preview]");
+    if (previewEl) {
+      previewEl.innerHTML = `<span>Tap to Sign (${role.charAt(0).toUpperCase() + role.slice(1)})</span>`;
+    }
+  });
+
+  if (typeof showSaveStatus === "function") showSaveStatus();
+}
+
+// WIZARD TRACKER LOGIC
+const steps = document.querySelectorAll(".wizard-step");
+const indicatorSteps = document.querySelectorAll(".step");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+
+// 1. Load saved step on startup (fallback to 0 if invalid or empty)
+const savedStep = parseInt(localStorage.getItem("wizardCurrentStep"), 10);
+let currentStep = (!isNaN(savedStep) && savedStep >= 0 && savedStep < steps.length) ? savedStep : 0;
+
+// 2. Initialize Click Events for the Progress Tracker
+indicatorSteps.forEach((stepCircle, index) => {
+  stepCircle.addEventListener("click", () => {
+    navigateTo(index);
+  });
+});
+
+// 3. Updated Navigation Function
+function navigateTo(index) {
+  // Clear 'active' from ALL steps & indicators to override hardcoded HTML
+  steps.forEach(step => step.classList.remove("active"));
+  indicatorSteps.forEach(ind => ind.classList.remove("active"));
+
+  // Update Index
+  currentStep = index;
+
+  // Persist current step to localStorage
+  localStorage.setItem("wizardCurrentStep", currentStep);
+
+  // Apply active class to current step
+  steps[currentStep].classList.add("active");
+  indicatorSteps[currentStep].classList.add("active");
+
+  // Handle "Previous" button visibility
+  if (prevBtn) prevBtn.style.visibility = (currentStep === 0) ? "hidden" : "visible";
+
+  // Handle "Next" button: Hide it completely on the final step
+  if (nextBtn) {
+    if (currentStep === steps.length - 1) {
+      nextBtn.style.display = "none";
+    } else {
+      nextBtn.style.display = "block";
+      nextBtn.innerText = "Next Step";
+    }
+  }
+
+  // Smooth scroll to top of the card
+  const mainContent = document.querySelector('main');
+  if (mainContent) mainContent.scrollIntoView({ behavior: 'smooth' });
+}
+
+// 4. Updated Next/Back logic
+function changeStep(n) {
+  let newStep = currentStep + n;
+  
+  // Only navigate if the step actually exists
+  if (newStep >= 0 && newStep < steps.length) {
+    navigateTo(newStep);
+  }
+}
+
+// 5. Force UI to match saved step as soon as DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  navigateTo(currentStep);
+});
+
+
+</script>
+</body>
+</html>
