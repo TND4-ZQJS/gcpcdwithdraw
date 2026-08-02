@@ -817,6 +817,178 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 50);
 });
 
+  
+/* ---------- Full and Partial Withdrawal option logic ---------- */
+// 1. Define the paired fields (Full vs Partial)
+const WITHDRAWAL_PAIRS = [
+  {
+    type: 'GCP',
+    fullId: 'GCPWD_Full_GCP',
+    partialId: 'GCPWD_Partial_GCP',
+    amountId: 'GCPWD_Partial_GCP_Amt',
+    label: 'Guaranteed Cash Payment (GCP)'
+  },
+  {
+    type: 'CD',
+    fullId: 'GCPWD_Full_CD',
+    partialId: 'GCPWD_Partial_CD',
+    amountId: 'GCPWD_Partial_CD_Amt',
+    label: 'Cash Dividend (CD)'
+  },
+  {
+    type: 'FDF',
+    fullId: 'GCPWD_Full_FDF',
+    partialId: 'GCPWD_Partial_FDF',
+    amountId: 'GCPWD_Partial_FDF_Amt',
+    label: 'Future Premium Deposit (FDF)'
+  }
+];
+
+// Helper to update visual dimmed state & disabled attribute
+function setElementState(element, isDisabled) {
+  if (!element) return;
+  element.disabled = isDisabled;
+
+  // Find parent container or label to apply dimmed class
+  const container = element.closest('div') || element.closest('label');
+  if (container) {
+    if (isDisabled) {
+      container.classList.add('dimmed');
+    } else {
+      container.classList.remove('dimmed');
+    }
+  }
+}
+
+// Helper to trigger save event for localStorage persistence
+function triggerChangeEvent(element) {
+  if (element) {
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+}
+
+// Core rule validation logic
+function handleWithdrawalToggle(pair, source) {
+  const fullCheck = document.getElementById(pair.fullId);
+  const partialCheck = document.getElementById(pair.partialId);
+  const amountInput = document.getElementById(pair.amountId);
+
+  if (!fullCheck || !partialCheck) return;
+
+  // SCENARIO A: User clicked FULL option
+  if (source === 'full' && fullCheck.checked) {
+    const hasPartialValue = partialCheck.checked || (amountInput && amountInput.value.trim() !== '');
+
+    if (hasPartialValue) {
+      const confirmSwitch = confirm(
+        `Selecting Full Withdrawal for ${pair.label} will clear your existing Partial Withdrawal selection and amount.\n\nDo you want to proceed?`
+      );
+
+      if (!confirmSwitch) {
+        fullCheck.checked = false; // Revert checkbox selection
+        return;
+      }
+    }
+
+    // Clear partial selection & value
+    partialCheck.checked = false;
+    if (amountInput) {
+      amountInput.value = '';
+      triggerChangeEvent(amountInput);
+    }
+    triggerChangeEvent(partialCheck);
+  }
+
+  // SCENARIO B: User clicked PARTIAL option
+  if (source === 'partial' && partialCheck.checked) {
+    if (fullCheck.checked) {
+      const confirmSwitch = confirm(
+        `Selecting Partial Withdrawal for ${pair.label} will uncheck Full Withdrawal.\n\nDo you want to proceed?`
+      );
+
+      if (!confirmSwitch) {
+        partialCheck.checked = false; // Revert checkbox selection
+        return;
+      }
+    }
+
+    // Clear full selection
+    fullCheck.checked = false;
+    triggerChangeEvent(fullCheck);
+  }
+
+  // UPDATE DISABLED & DIMMED STATES
+  // 1. If Full is checked -> Disable Partial checkbox & Amount input
+  if (fullCheck.checked) {
+    setElementState(partialCheck, true);
+    setElementState(amountInput, true);
+    setElementState(fullCheck, false);
+  } 
+  // 2. If Partial is checked -> Disable Full checkbox (Enable Amount input)
+  else if (partialCheck.checked) {
+    setElementState(fullCheck, true);
+    setElementState(partialCheck, false);
+    setElementState(amountInput, false);
+  } 
+  // 3. If Neither is checked -> Enable all
+  else {
+    setElementState(fullCheck, false);
+    setElementState(partialCheck, false);
+    setElementState(amountInput, false);
+  }
+}
+
+// Setup Event Listeners and Initial Load State
+function initWithdrawalRules() {
+  WITHDRAWAL_PAIRS.forEach((pair) => {
+    const fullCheck = document.getElementById(pair.fullId);
+    const partialCheck = document.getElementById(pair.partialId);
+
+    if (fullCheck) {
+      fullCheck.addEventListener('change', (e) => {
+        // Only run logic if triggered by actual user click (isTrusted = true)
+        if (e.isTrusted) handleWithdrawalToggle(pair, 'full');
+      });
+    }
+
+    if (partialCheck) {
+      partialCheck.addEventListener('change', (e) => {
+        // Only run logic if triggered by actual user click (isTrusted = true)
+        if (e.isTrusted) handleWithdrawalToggle(pair, 'partial');
+      });
+    }
+
+    // Run initial sync once page/localStorage loads
+    syncInitialWithdrawalState(pair);
+  });
+}
+
+// Sync state on page load (without showing confirm prompts)
+function syncInitialWithdrawalState(pair) {
+  const fullCheck = document.getElementById(pair.fullId);
+  const partialCheck = document.getElementById(pair.partialId);
+  const amountInput = document.getElementById(pair.amountId);
+
+  if (!fullCheck || !partialCheck) return;
+
+  if (fullCheck.checked) {
+    setElementState(partialCheck, true);
+    setElementState(amountInput, true);
+  } else if (partialCheck.checked) {
+    setElementState(fullCheck, true);
+    setElementState(amountInput, false);
+  } else {
+    setElementState(fullCheck, false);
+    setElementState(partialCheck, false);
+    setElementState(amountInput, false);
+  }
+}
+
+// Initialize when DOM content is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initWithdrawalRules();
+});  
+
 /* ---------- Transfer to Policy Section & Sub-Options Engine ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const mainCB = document.getElementById("Trf_to_Other_Policy_CB");
