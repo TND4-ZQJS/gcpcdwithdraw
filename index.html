@@ -1,8 +1,9 @@
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>GCP / Cash Dividend / FDF Wothdrawal Form</title>
+<title>GCP / Cash Dividend / FDF Withdrawal Form</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   :root{
@@ -204,7 +205,7 @@
 </head>
 <body>
 <main>
-  <h1>GCP / Cash Dividend / FDF Wothdrawal Form</h1>
+  <h1>GCP / Cash Dividend / FDF Withdrawal Form</h1>
 
   <!-- Progress Tracker -->
   <div class="step-indicator" id="stepIndicator">
@@ -337,6 +338,11 @@
       </label>
     </div>
 
+    <div id="fundsContainer"></div>
+
+    <div class="row">
+      <button type="button" id="addFundBtn" class="add-btn">+ Add Fund</button>
+    </div>
   </section>
   </div><!-- (END) STEP 3: Withdrawal -->
     
@@ -678,6 +684,169 @@ window.addEventListener("DOMContentLoaded", () => {
   loadFromLocalStorage();
 });
 
+/* ---------- Fund List Logic ---------- */
+const FUND_LIST = [
+  { key: "Managed", label: "Managed Fund", amtId: "ILWD_Managed_Amt", unitId: "ILWD_Managed_Unit" },
+  { key: "Equity", label: "Equity Fund", amtId: "ILWD_Equity_Amt", unitId: "ILWD_Equity_Unit" },
+  { key: "Income", label: "Income Fund", amtId: "ILWD_Income_Amt", unitId: "ILWD_Income_Unit" },
+  { key: "DanaEkuiti", label: "Dana Ekuiti", amtId: "ILWD_DanaEkuiti_Amt", unitId: "ILWD_DanaEkuiti_Unit" },
+  { key: "FlexiInvest", label: "FlexiInvest", amtId: "ILWD_FlexiInvest_Amt", unitId: "ILWD_FlexiInvest_Unit" },
+  { key: "China", label: "China Fund", amtId: "ILWD_China_Amt", unitId: "ILWD_China_Unit" },
+  { key: "Progress", label: "Progress Fund", amtId: "ILWD_Progress_Amt", unitId: "ILWD_Progress_Unit" },
+  { key: "Dividend", label: "Dividend Fund", amtId: "ILWD_Dividend_Amt", unitId: "ILWD_Dividend_Unit" },
+  { key: "AsiaPacReit", label: "Asia Pac REIT", amtId: "ILWD_AsiaPacReit_Amt", unitId: "ILWD_AsiaPacReit_Unit" },
+  { key: "GlobalEquity", label: "Global Equity", amtId: "ILWD_GlobalEquity_Amt", unitId: "ILWD_GlobalEquity_Unit" },
+  { key: "DanaAsia", label: "Dana Asia", amtId: "ILWD_DanaAsia_Amt", unitId: "ILWD_DanaAsia_Unit" }
+];
+
+const DEFAULT_FUND_KEY = "Equity";
+const modeSelect = $("ILWD_WithdrawalOption");
+const container = $("fundsContainer");
+const addBtn = $("addFundBtn");
+
+const STORAGE_KEY_MODE = 'ILWD_WithdrawalOption_Saved';
+const STORAGE_KEY_FUNDS = 'ILWD_WithdrawalFunds_Saved';
+
+let selectedFundKeys = new Set();
+
+function saveToLocalStorage() {
+  localStorage.setItem(STORAGE_KEY_MODE, modeSelect.value);
+  const rowsData = [];
+  container.querySelectorAll('.fund-item').forEach(row => {
+    const select = row.querySelector('.fund-select');
+    const val = row.querySelector('.fund-input').value;
+    if (select && select.value) {
+      rowsData.push({ fundKey: select.value, val });
+    }
+  });
+  localStorage.setItem(STORAGE_KEY_FUNDS, JSON.stringify(rowsData));
+  showSaveStatus();
+}
+
+function createFundRow(initialFundKey = null, initialVal = '') {
+  const availableFunds = FUND_LIST.filter(f => !selectedFundKeys.has(f.key));
+  if (!initialFundKey && availableFunds.length === 0) {
+    alert("All available funds have been added.");
+    return;
+  }
+
+  const mode = modeSelect.value;
+  const row = document.createElement('div');
+  row.className = 'row fund-item';
+
+  const select = document.createElement('select');
+  select.className = 'fund-select';
+  select.style.flex = '1';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.step = 'any';
+  input.value = initialVal;
+  input.placeholder = mode === 'Amount' ? 'Amount (RM)' : 'Units';
+  input.className = 'fund-input';
+  input.style.flex = '1';
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '✕';
+
+  let currentKey = initialFundKey || (availableFunds.some(f => f.key === DEFAULT_FUND_KEY) ? DEFAULT_FUND_KEY : availableFunds[0].key);
+
+  selectedFundKeys.add(currentKey);
+  select.dataset.selectedKey = currentKey;
+
+  select.addEventListener('change', (e) => {
+    selectedFundKeys.delete(select.dataset.selectedKey);
+    currentKey = e.target.value;
+    select.dataset.selectedKey = currentKey;
+    selectedFundKeys.add(currentKey);
+    updateAllDropdowns();
+    saveToLocalStorage();
+  });
+
+  input.addEventListener('input', saveToLocalStorage);
+
+  removeBtn.addEventListener('click', () => {
+    selectedFundKeys.delete(select.dataset.selectedKey);
+    row.remove();
+    updateAllDropdowns();
+    saveToLocalStorage();
+  });
+
+  row.appendChild(select);
+  row.appendChild(input);
+  row.appendChild(removeBtn);
+  container.appendChild(row);
+
+  updateAllDropdowns();
+  select.value = currentKey;
+}
+
+function updateAllDropdowns() {
+  container.querySelectorAll('.fund-item').forEach(row => {
+    const select = row.querySelector('.fund-select');
+    if (!select) return;
+    const currentVal = select.dataset.selectedKey || select.value;
+    select.innerHTML = '';
+    FUND_LIST.forEach(fund => {
+      if (fund.key === currentVal || !selectedFundKeys.has(fund.key)) {
+        const option = document.createElement('option');
+        option.value = fund.key;
+        option.textContent = fund.label;
+        if (fund.key === currentVal) option.selected = true;
+        select.appendChild(option);
+      }
+    });
+    select.value = currentVal;
+  });
+}
+
+modeSelect.addEventListener('change', () => {
+  const mode = modeSelect.value;
+  container.querySelectorAll('.fund-input').forEach(input => {
+    input.placeholder = mode === 'Amount' ? 'Amount (RM)' : 'Units';
+  });
+  saveToLocalStorage();
+});
+
+function loadFromLocalStorage() {
+  const savedMode = localStorage.getItem(STORAGE_KEY_MODE);
+  if (savedMode) modeSelect.value = savedMode;
+
+  const savedFundsRaw = localStorage.getItem(STORAGE_KEY_FUNDS);
+  if (savedFundsRaw) {
+    try {
+      const savedFunds = JSON.parse(savedFundsRaw);
+      if (Array.isArray(savedFunds) && savedFunds.length > 0) {
+        savedFunds.forEach(item => createFundRow(item.fundKey, item.val));
+        return;
+      }
+    } catch (e) { console.error(e); }
+  }
+  createFundRow();
+}
+
+addBtn.addEventListener('click', () => {
+  createFundRow();
+  saveToLocalStorage();
+});
+
+function getPdfFormData() {
+  const mode = modeSelect.value;
+  const pdfData = {};
+  container.querySelectorAll('.fund-item').forEach(row => {
+    const select = row.querySelector('.fund-select');
+    const val = row.querySelector('.fund-input').value;
+    if (select && select.value && val) {
+      const fundConfig = FUND_LIST.find(f => f.key === select.value);
+      if (fundConfig) {
+        pdfData[mode === 'Amount' ? fundConfig.amtId : fundConfig.unitId] = val;
+      }
+    }
+  });
+  return pdfData;
+}
 
 /* ---------- Combined PO -> E-Bank & PO -> Insured Sync Helper ---------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -791,7 +960,104 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 50);
 });
 
+/* ---------- Transfer to Policy Section & Sub-Options Engine ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const mainCB = document.getElementById("Trf_to_Other_Policy_CB");
+  const section = document.getElementById("Trf_to_Other_Policy");
 
+  // Sub-checkboxes mapped to their amount textboxes
+  const subTransferFields = [
+    { cbId: "ILWD_Trf_FYPNewB", amtId: "ILWD_Trf_FYPNewB_Amt" },
+    { cbId: "ILWD_Trf_Premium",  amtId: "ILWD_Trf_Premium_Amt" },
+    { cbId: "ILWD_Trf_TopUp",    amtId: "ILWD_Trf_TopUp_Amt" },
+    { cbId: "ILWD_Trf_Loan",     amtId: "ILWD_Trf_Loan_Amt" },
+    { cbId: "ILWD_Trf_APL",      amtId: "ILWD_Trf_APL_Amt" }
+  ];
+
+  /* --------------------------------------------------------------------------
+     1. SUB-CHECKBOX TOGGLES (Show/Hide Sub-Amount Fields)
+     -------------------------------------------------------------------------- */
+  function updateSubFieldState({ cbId, amtId }) {
+    const checkbox = document.getElementById(cbId);
+    const amtInput = document.getElementById(amtId);
+
+    if (!checkbox || !amtInput) return;
+
+    if (checkbox.checked) {
+      amtInput.style.display = "inline-block";
+    } else {
+      amtInput.style.display = "none";
+      amtInput.value = "";
+      localStorage.removeItem(amtId);
+    }
+  }
+
+  // Bind listeners for sub-checkboxes
+  subTransferFields.forEach((fieldPair) => {
+    const checkbox = document.getElementById(fieldPair.cbId);
+    if (checkbox) {
+      checkbox.addEventListener("change", () => updateSubFieldState(fieldPair));
+    }
+  });
+
+  /* --------------------------------------------------------------------------
+     2. MAIN SECTION DATA WIPER & TOGGLE
+     -------------------------------------------------------------------------- */
+  function clearEntireSectionData() {
+    if (!section) return;
+
+    // Grab all form elements within the section
+    const inputs = section.querySelectorAll("input, select, textarea");
+
+    inputs.forEach((input) => {
+      // 1. Reset DOM values
+      if (input.type === "checkbox" || input.type === "radio") {
+        input.checked = false;
+      } else {
+        input.value = "";
+      }
+
+      // 2. Re-hide sub-amount textboxes specifically
+      if (input.id.endsWith("_Amt")) {
+        input.style.display = "none";
+      }
+
+      // 3. Clear localStorage entries
+      if (input.id) {
+        localStorage.removeItem(input.id);
+      }
+    });
+
+    if (typeof showSaveStatus === "function") showSaveStatus();
+  }
+
+  function toggleMainSection() {
+    if (!mainCB || !section) return;
+
+    if (mainCB.checked) {
+      section.style.display = ""; // Show section
+      // Check sub-fields in case restored checkbox states need their textboxes visible
+      subTransferFields.forEach(updateSubFieldState);
+    } else {
+      section.style.display = "none"; // Hide section
+      clearEntireSectionData();       // Erase values and localStorage
+    }
+  }
+
+  if (mainCB) {
+    mainCB.addEventListener("change", toggleMainSection);
+  }
+
+  /* --------------------------------------------------------------------------
+     3. INITIALIZATION (Delayed for autoBindSave restoration)
+     -------------------------------------------------------------------------- */
+  setTimeout(() => {
+    // Evaluate sub-checkboxes
+    subTransferFields.forEach(updateSubFieldState);
+    // Evaluate main section visibility
+    toggleMainSection();
+  }, 50);
+});
 
 /* ---------- Signature Names Display ---------- */
 document.addEventListener("DOMContentLoaded", () => {
