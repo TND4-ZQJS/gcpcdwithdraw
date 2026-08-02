@@ -617,8 +617,8 @@ Premium Deposit under the policy for the first withdrawal</small>
           <span class="doc-sub">LF4069 · 3 Pages (email to mypos@manulife.my )</span>
         </div>
         <div class="actions">
-          <button onclick="fillPDF('investment-link-partial-withdrawal_LF4069_21102024_fillable.pdf', 'view')" class="btn-secondary">View</button>
-          <button onclick="fillPDF('investment-link-partial-withdrawal_LF4069_21102024_fillable.pdf', 'download')" class="btn-primary">Download</button>
+          <button onclick="fillPDF('Application for Fund Withdrawal_LF1050_fillable.pdf', 'view')" class="btn-secondary">View</button>
+          <button onclick="fillPDF('Application for Fund Withdrawal_LF1050_fillable.pdf', 'download')" class="btn-primary">Download</button>
         </div>
       </div>
     </div> <!-- Close pdf-grid -->
@@ -660,7 +660,7 @@ Premium Deposit under the policy for the first withdrawal</small>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>
 <script>
 /* ---------- CONFIG ---------- */
-const PDF_FILENAME = "investment-link-partial-withdrawal_LF4069_21102024_fillable.pdf";
+const PDF_FILENAME = "Application for Fund Withdrawal_LF1050_fillable.pdf";
 const FORM_ID = "ilpwd";
 
 /* ---------- DOM Helpers ---------- */
@@ -1520,7 +1520,7 @@ async function fillPDF(templateFileName, action = 'download') {
       }
     }
 
-    const finalFileName = `${policyNum}_FundWithdrawal.pdf`;
+    const finalFileName = `${policyNum}_GCPCDWithdrawal.pdf`;
 
     // 5. Execute action (View in new tab OR Force Download)
     if (action === 'view') {
