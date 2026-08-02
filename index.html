@@ -835,7 +835,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 50);
 });
 
-/* ---------- Withdrawal Section Toggle Logic ---------- */
+/* =========================================================
+   SECTION TOGGLE FUNCTIONS
+   ========================================================= */
 
 const SECTION_TOGGLES = [
   {
@@ -848,39 +850,67 @@ const SECTION_TOGGLES = [
   }
 ];
 
-// Helper to toggle inline display property
+// Toggle inline display property directly
 function toggleSectionVisibility(checkboxId, sectionId) {
   const checkbox = document.getElementById(checkboxId);
   const section = document.getElementById(sectionId);
 
   if (!checkbox || !section) return;
 
-  // If checked, show section (block/grid), else hide
   if (checkbox.checked) {
-    section.style.display = 'block'; // Or 'grid' / 'flex' depending on your layout
+    section.style.setProperty('display', 'block', 'important');
   } else {
-    section.style.display = 'none';
+    section.style.setProperty('display', 'none', 'important');
   }
 }
 
+// Attach change and click listeners to the checkboxes
 function initSectionToggleRules() {
   SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
     const checkbox = document.getElementById(checkboxId);
 
     if (checkbox) {
-      checkbox.addEventListener('change', () => {
-        if (typeof saveElValue === 'function') saveElValue(checkbox);
-        toggleSectionVisibility(checkboxId, sectionId);
+      ['change', 'click'].forEach(eventType => {
+        checkbox.addEventListener(eventType, () => {
+          if (typeof saveElValue === 'function') saveElValue(checkbox);
+          toggleSectionVisibility(checkboxId, sectionId);
+        });
       });
     }
   });
 }
 
+// Sync section visibilities on page load
 function syncAllSectionVisibilities() {
   SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
     toggleSectionVisibility(checkboxId, sectionId);
   });
-}  
+}
+
+
+/* =========================================================
+   STEP 3: DOM INITIALIZATION (PLACED RIGHT AFTER STEP 2)
+   ========================================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Bind persistent fields to localStorage
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    if (el.id && typeof autoBindSave === 'function') autoBindSave(el);
+  });
+
+  // 2. Load restored values from localStorage
+  if (typeof loadFromLocalStorage === 'function') loadFromLocalStorage();
+
+  // 3. Attach event listeners for rules
+  if (typeof initWithdrawalRules === 'function') initWithdrawalRules();
+  initSectionToggleRules(); 
+
+  // 4. Force UI refresh after localStorage restoration finishes
+  setTimeout(() => {
+    if (typeof syncAllWithdrawalStates === 'function') syncAllWithdrawalStates();
+    syncAllSectionVisibilities(); 
+  }, 50);
+});
 
   
 /* ---------- Full and Partial Withdrawal Option Logic ---------- */
