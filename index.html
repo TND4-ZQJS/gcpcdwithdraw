@@ -156,6 +156,24 @@
   border-radius: 6px;
 } 
 
+/* Lock container wrappers and force child element opacity */
+.dimmed,
+.dimmed-locked {
+  opacity: 0.45 !important;
+  pointer-events: none !important; /* Prevents mouse clicks on container */
+  user-select: none !important;
+  transition: opacity 0.2s ease;
+}
+
+/* Force lock direct input elements */
+.dimmed input,
+.dimmed-locked input,
+input.dimmed-locked {
+  pointer-events: none !important; /* Prevents direct click focus on text inputs */
+  cursor: not-allowed !important;
+  background-color: #f5f5f7 !important;
+}  
+
    /* ---------- WIZARD CSS ---------- */ 
   /* Progress Tracker Container */
 .step-indicator {display: flex;justify-content: space-between;margin-bottom: 30px;background: #fff;padding: 15px;border-radius: 12px;border: 1px solid var(--line);overflow-x: auto;gap: 10px;}
