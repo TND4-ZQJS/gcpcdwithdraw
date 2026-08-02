@@ -326,11 +326,12 @@
       <div class="row"><label>Withdrawal Option</label></div>
       <div class="grid-2">
           <label class="inline"><input id="ILWD_EBank_Conventional" class="persist" name="Accounttype" type="radio"><b>Full Withdrawal</b></label>
-          <label class="inline"><input id="ILWD_EBank_Islamic" class="persist" name="Accounttype" type="radio">Partial Withdrawal</label>
+          <label class="inline"><input id="ILWD_EBank_Islamic" class="persist" name="Accounttype" type="radio"><b>Partial Withdrawal</b></label>
       </div>
     </section>
 
   <section class="section" id="option_fullwithdraw">
+    <h3>Full Wthdrawal Details</h3>
     <div class="grid-1" >
   <div>
     <label class="inline"><input id="GCPWD_Full_GCP" class="persist" type="checkbox">Guaranteed Cash Payment - Full Withdrawal</label>
@@ -347,16 +348,16 @@
   <section class="section" id="option_partialwithdraw">
     <div class="grid-1" >
   <div>
-    <label class="inline"><input id="GCPWD_Partial_GCP" class="persist" type="checkbox">Single Premium Top-Up</label>
-    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Partial_GCP" class="persist" type="checkbox">Partial Withdrwal GCP</label>
+    <input id="GCPWD_Partial_GCP_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
   <div>
-    <label class="inline"><input id="ILWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
-    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Partial_CD" class="persist" type="checkbox">Partial Withdrwal CD</label>
+    <input id="GCPWD_Partial_CD_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
   <div>
-    <label class="inline"><input id="ILWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
-    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Partial_FDF" class="persist" type="checkbox">Partial Withdrwal FDF</label>
+    <input id="GCPWD_Partial_FDF_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
 </div>  
   </section>
