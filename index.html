@@ -319,10 +319,8 @@
   </div> <!-- (END) STEP 2: Person -->
 
   <div class="wizard-step"><!-- Step 3: Reason of Wtihdrawal -->
-  <section class="section">
-   <h2>Withdrawal Details</h2>
 
-        <section class="section">
+    <section class="section">
       <div class="row"><label>Withdrawal Option</label></div>
       <div class="grid-2">
           <label class="inline"><input id="ILWD_EBank_Conventional" class="persist" name="Accounttype" type="radio"><b>Full Withdrawal</b></label>
@@ -331,7 +329,7 @@
     </section>
 
   <section class="section" id="option_fullwithdraw">
-    <h3>Full Wthdrawal Details</h3>
+    <h2>Full Withdrawal Details</h2>
     <div class="grid-1" >
   <div>
     <label class="inline"><input id="GCPWD_Full_GCP" class="persist" type="checkbox">Guaranteed Cash Payment - Full Withdrawal</label>
@@ -346,6 +344,7 @@
   </section>
 
   <section class="section" id="option_partialwithdraw">
+    <h2>Partial Withdrawal Details</h2>
     <div class="grid-1" >
   <div>
     <label class="inline"><input id="GCPWD_Partial_GCP" class="persist" type="checkbox">Partial Withdrwal GCP</label>
@@ -353,17 +352,16 @@
   </div>
   <div>
     <label class="inline"><input id="GCPWD_Partial_CD" class="persist" type="checkbox">Partial Withdrwal CD</label>
-    <input id="GCPWD_Partial_CD_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <input id="GCPWD_Partial_CD_Amt" class="persist" type="text" placeholder="Enter Amount (RM)">
   </div>
   <div>
     <label class="inline"><input id="GCPWD_Partial_FDF" class="persist" type="checkbox">Partial Withdrwal FDF</label>
-    <input id="GCPWD_Partial_FDF_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <input id="GCPWD_Partial_FDF_Amt" class="persist" type="text" placeholder="Enter Amount (RM)">
   </div>
 </div>  
   </section>
     
 
-  </section>
   </div><!-- (END) STEP 3: Withdrawal -->
     
 
