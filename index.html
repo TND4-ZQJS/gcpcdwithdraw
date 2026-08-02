@@ -341,12 +341,12 @@ input.dimmed-locked {
     <section class="section">
       <div class="row"><label>Withdrawal Option</label></div>
       <div class="grid-2">
-          <label class="inline"><input id="ILWD_EBank_Conventional" class="persist" name="Accounttype" type="checkbox"><b>Full Withdrawal</b></label>
-          <label class="inline"><input id="ILWD_EBank_Islamic" class="persist" name="Accounttype" type="checkbox"><b>Partial Withdrawal</b></label>
+          <label class="inline"><input id="full_withdraw_CB" class="persist" type="checkbox"><b>Full Withdrawal</b></label>
+          <label class="inline"><input id="partial_withdraw_CB" class="persist" type="checkbox"><b>Partial Withdrawal</b></label>
       </div>
     </section>
 
-  <section class="section" id="option_fullwithdraw">
+  <section class="section" id="option_fullwithdraw" style="display: none;">
     <h2>Full Withdrawal Details</h2>
     <div class="grid-1" >
   <div>
@@ -361,7 +361,7 @@ input.dimmed-locked {
 </div>  
   </section>
 
-  <section class="section" id="option_partialwithdraw">
+  <section class="section" id="option_partialwithdraw" style="display: none;">
     <h2>Partial Withdrawal Details</h2>
     <div class="grid-1" >
   <div>
@@ -834,6 +834,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 50);
 });
+
+/* ---------- Withdrawal Section Toggle Logic ---------- */
+
+const SECTION_TOGGLES = [
+  {
+    checkboxId: 'full_withdraw_CB',
+    sectionId: 'option_fullwithdraw'
+  },
+  {
+    checkboxId: 'partial_withdraw_CB',
+    sectionId: 'option_partialwithdraw'
+  }
+];
+
+// Helper to toggle inline display property
+function toggleSectionVisibility(checkboxId, sectionId) {
+  const checkbox = document.getElementById(checkboxId);
+  const section = document.getElementById(sectionId);
+
+  if (!checkbox || !section) return;
+
+  // If checked, show section (block/grid), else hide
+  if (checkbox.checked) {
+    section.style.display = 'block'; // Or 'grid' / 'flex' depending on your layout
+  } else {
+    section.style.display = 'none';
+  }
+}
+
+function initSectionToggleRules() {
+  SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
+    const checkbox = document.getElementById(checkboxId);
+
+    if (checkbox) {
+      checkbox.addEventListener('change', () => {
+        if (typeof saveElValue === 'function') saveElValue(checkbox);
+        toggleSectionVisibility(checkboxId, sectionId);
+      });
+    }
+  });
+}
+
+function syncAllSectionVisibilities() {
+  SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
+    toggleSectionVisibility(checkboxId, sectionId);
+  });
+}  
 
   
 /* ---------- Full and Partial Withdrawal Option Logic ---------- */
