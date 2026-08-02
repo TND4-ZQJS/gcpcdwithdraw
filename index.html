@@ -157,30 +157,23 @@
 } 
 
 /* Dimmed state for disabled withdrawal items */
-.dimmed {
-  opacity: 0.45;
-  pointer-events: none; /* Prevents clicks on container labels */
-  transition: opacity 0.2s ease;
-}
-
-.dimmed input[type="text"] {
-  background-color: #f5f5f7 !important;
-  cursor: not-allowed;
-}  
-
-/* Non-clickable dimmed state */
+/* Container dimming */
+.dimmed,
 .dimmed-locked {
-  opacity: 0.45;
-  pointer-events: none; /* Completely disables mouse clicks/taps */
-  user-select: none;
+  opacity: 0.45 !important;
+  pointer-events: none !important; /* Locks entire wrapper */
+  user-select: none !important;
   transition: opacity 0.2s ease;
 }
 
-.dimmed-locked input {
+/* Force-lock child input elements */
+.dimmed input,
+.dimmed-locked input,
+input.dimmed-locked {
+  pointer-events: none !important; /* Blocks clicks on inputs */
   cursor: not-allowed !important;
   background-color: #f5f5f7 !important;
-}  
-
+}
    /* ---------- WIZARD CSS ---------- */ 
   /* Progress Tracker Container */
 .step-indicator {display: flex;justify-content: space-between;margin-bottom: 30px;background: #fff;padding: 15px;border-radius: 12px;border: 1px solid var(--line);overflow-x: auto;gap: 10px;}
@@ -728,7 +721,9 @@ window.addEventListener("DOMContentLoaded", () => {
   loadFromLocalStorage();
 
   initWithdrawalRules();
-  syncAllWithdrawalStates();
+  setTimeout(() => {
+    syncAllWithdrawalStates();
+  }, 50);;
 });
 
 
@@ -847,7 +842,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
 /* ---------- Full and Partial Withdrawal Option Logic ---------- */
-
 const WITHDRAWAL_PAIRS = [
   {
     type: 'GCP',
@@ -872,13 +866,20 @@ const WITHDRAWAL_PAIRS = [
   }
 ];
 
-// Helper to disable and add/remove dimmed class
 function setElementDisabled(element, isDisabled) {
   if (!element) return;
-  
-  element.disabled = isDisabled;
-  const container = element.closest('div') || element.closest('label');
 
+  element.disabled = isDisabled;
+
+  if (isDisabled) {
+    element.setAttribute('tabindex', '-1');
+    element.classList.add('dimmed-locked');
+  } else {
+    element.removeAttribute('tabindex');
+    element.classList.remove('dimmed-locked');
+  }
+
+  const container = element.closest('label') || element.closest('div');
   if (container) {
     if (isDisabled) {
       container.classList.add('dimmed-locked');
@@ -888,7 +889,6 @@ function setElementDisabled(element, isDisabled) {
   }
 }
 
-// Update UI states based on current selection
 function updatePairStates(pair) {
   const fullCheck = document.getElementById(pair.fullId);
   const partialCheck = document.getElementById(pair.partialId);
@@ -917,7 +917,6 @@ function initWithdrawalRules() {
     const partialCheck = document.getElementById(pair.partialId);
     const amountInput = document.getElementById(pair.amountId);
 
-    // FULL CHECKBOX CHANGE
     if (fullCheck) {
       fullCheck.addEventListener('change', () => {
         if (fullCheck.checked) {
@@ -935,7 +934,6 @@ function initWithdrawalRules() {
             }
           }
 
-          // Clear Partial selection & text input
           partialCheck.checked = false;
           saveElValue(partialCheck);
 
@@ -950,7 +948,6 @@ function initWithdrawalRules() {
       });
     }
 
-    // PARTIAL CHECKBOX CHANGE
     if (partialCheck) {
       partialCheck.addEventListener('change', () => {
         if (!partialCheck.checked && amountInput) {
@@ -965,7 +962,6 @@ function initWithdrawalRules() {
   });
 }
 
-// Sync function to call AFTER localStorage has loaded
 function syncAllWithdrawalStates() {
   WITHDRAWAL_PAIRS.forEach(pair => updatePairStates(pair));
 }
