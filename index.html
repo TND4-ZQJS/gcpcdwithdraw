@@ -168,6 +168,19 @@
   cursor: not-allowed;
 }  
 
+/* Non-clickable dimmed state */
+.dimmed-locked {
+  opacity: 0.45;
+  pointer-events: none; /* Completely disables mouse clicks/taps */
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.dimmed-locked input {
+  cursor: not-allowed !important;
+  background-color: #f5f5f7 !important;
+}  
+
    /* ---------- WIZARD CSS ---------- */ 
   /* Progress Tracker Container */
 .step-indicator {display: flex;justify-content: space-between;margin-bottom: 30px;background: #fff;padding: 15px;border-radius: 12px;border: 1px solid var(--line);overflow-x: auto;gap: 10px;}
@@ -713,6 +726,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   initSignatureFields();
   loadFromLocalStorage();
+
+  initWithdrawalRules();
+  syncAllWithdrawalStates();
 });
 
 
@@ -830,8 +846,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
   
-/* ---------- Full and Partial Withdrawal option logic ---------- */
-// 1. Define the paired fields (Full vs Partial)
+/* ---------- Full and Partial Withdrawal Option Logic ---------- */
+
 const WITHDRAWAL_PAIRS = [
   {
     type: 'GCP',
@@ -856,150 +872,103 @@ const WITHDRAWAL_PAIRS = [
   }
 ];
 
-// Helper to update visual dimmed state & disabled attribute
-function setElementState(element, isDisabled) {
+// Helper to disable and add/remove dimmed class
+function setElementDisabled(element, isDisabled) {
   if (!element) return;
+  
   element.disabled = isDisabled;
-
-  // Find parent container or label to apply dimmed class
   const container = element.closest('div') || element.closest('label');
+
   if (container) {
     if (isDisabled) {
-      container.classList.add('dimmed');
+      container.classList.add('dimmed-locked');
     } else {
-      container.classList.remove('dimmed');
+      container.classList.remove('dimmed-locked');
     }
   }
 }
 
-// Helper to trigger save event for localStorage persistence
-function triggerChangeEvent(element) {
-  if (element) {
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-}
-
-// Core rule validation logic
-function handleWithdrawalToggle(pair, source) {
+// Update UI states based on current selection
+function updatePairStates(pair) {
   const fullCheck = document.getElementById(pair.fullId);
   const partialCheck = document.getElementById(pair.partialId);
   const amountInput = document.getElementById(pair.amountId);
 
   if (!fullCheck || !partialCheck) return;
 
-  // SCENARIO A: User clicked FULL option
-  if (source === 'full' && fullCheck.checked) {
-    const hasPartialValue = partialCheck.checked || (amountInput && amountInput.value.trim() !== '');
-
-    if (hasPartialValue) {
-      const confirmSwitch = confirm(
-        `Selecting Full Withdrawal for ${pair.label} will clear your existing Partial Withdrawal selection and amount.\n\nDo you want to proceed?`
-      );
-
-      if (!confirmSwitch) {
-        fullCheck.checked = false; // Revert checkbox selection
-        return;
-      }
-    }
-
-    // Clear partial selection & value
-    partialCheck.checked = false;
-    if (amountInput) {
-      amountInput.value = '';
-      triggerChangeEvent(amountInput);
-    }
-    triggerChangeEvent(partialCheck);
-  }
-
-  // SCENARIO B: User clicked PARTIAL option
-  if (source === 'partial' && partialCheck.checked) {
-    if (fullCheck.checked) {
-      const confirmSwitch = confirm(
-        `Selecting Partial Withdrawal for ${pair.label} will uncheck Full Withdrawal.\n\nDo you want to proceed?`
-      );
-
-      if (!confirmSwitch) {
-        partialCheck.checked = false; // Revert checkbox selection
-        return;
-      }
-    }
-
-    // Clear full selection
-    fullCheck.checked = false;
-    triggerChangeEvent(fullCheck);
-  }
-
-  // UPDATE DISABLED & DIMMED STATES
-  // 1. If Full is checked -> Disable Partial checkbox & Amount input
   if (fullCheck.checked) {
-    setElementState(partialCheck, true);
-    setElementState(amountInput, true);
-    setElementState(fullCheck, false);
-  } 
-  // 2. If Partial is checked -> Disable Full checkbox (Enable Amount input)
-  else if (partialCheck.checked) {
-    setElementState(fullCheck, true);
-    setElementState(partialCheck, false);
-    setElementState(amountInput, false);
-  } 
-  // 3. If Neither is checked -> Enable all
-  else {
-    setElementState(fullCheck, false);
-    setElementState(partialCheck, false);
-    setElementState(amountInput, false);
+    setElementDisabled(partialCheck, true);
+    setElementDisabled(amountInput, true);
+    setElementDisabled(fullCheck, false);
+  } else if (partialCheck.checked) {
+    setElementDisabled(fullCheck, true);
+    setElementDisabled(partialCheck, false);
+    setElementDisabled(amountInput, false);
+  } else {
+    setElementDisabled(fullCheck, false);
+    setElementDisabled(partialCheck, false);
+    setElementDisabled(amountInput, false);
   }
 }
 
-// Setup Event Listeners and Initial Load State
 function initWithdrawalRules() {
   WITHDRAWAL_PAIRS.forEach((pair) => {
     const fullCheck = document.getElementById(pair.fullId);
     const partialCheck = document.getElementById(pair.partialId);
+    const amountInput = document.getElementById(pair.amountId);
 
+    // FULL CHECKBOX CHANGE
     if (fullCheck) {
-      fullCheck.addEventListener('change', (e) => {
-        // Only run logic if triggered by actual user click (isTrusted = true)
-        if (e.isTrusted) handleWithdrawalToggle(pair, 'full');
+      fullCheck.addEventListener('change', () => {
+        if (fullCheck.checked) {
+          const hasPartialData = partialCheck.checked || (amountInput && amountInput.value.trim() !== '');
+
+          if (hasPartialData) {
+            const confirmSwitch = confirm(
+              `Selecting Full Withdrawal for ${pair.label} will clear your existing Partial Withdrawal selection and amount.\n\nDo you want to proceed?`
+            );
+
+            if (!confirmSwitch) {
+              fullCheck.checked = false;
+              saveElValue(fullCheck);
+              return;
+            }
+          }
+
+          // Clear Partial selection & text input
+          partialCheck.checked = false;
+          saveElValue(partialCheck);
+
+          if (amountInput) {
+            amountInput.value = '';
+            saveElValue(amountInput);
+          }
+        }
+
+        saveElValue(fullCheck);
+        updatePairStates(pair);
       });
     }
 
+    // PARTIAL CHECKBOX CHANGE
     if (partialCheck) {
-      partialCheck.addEventListener('change', (e) => {
-        // Only run logic if triggered by actual user click (isTrusted = true)
-        if (e.isTrusted) handleWithdrawalToggle(pair, 'partial');
+      partialCheck.addEventListener('change', () => {
+        if (!partialCheck.checked && amountInput) {
+          amountInput.value = '';
+          saveElValue(amountInput);
+        }
+
+        saveElValue(partialCheck);
+        updatePairStates(pair);
       });
     }
-
-    // Run initial sync once page/localStorage loads
-    syncInitialWithdrawalState(pair);
   });
 }
 
-// Sync state on page load (without showing confirm prompts)
-function syncInitialWithdrawalState(pair) {
-  const fullCheck = document.getElementById(pair.fullId);
-  const partialCheck = document.getElementById(pair.partialId);
-  const amountInput = document.getElementById(pair.amountId);
-
-  if (!fullCheck || !partialCheck) return;
-
-  if (fullCheck.checked) {
-    setElementState(partialCheck, true);
-    setElementState(amountInput, true);
-  } else if (partialCheck.checked) {
-    setElementState(fullCheck, true);
-    setElementState(amountInput, false);
-  } else {
-    setElementState(fullCheck, false);
-    setElementState(partialCheck, false);
-    setElementState(amountInput, false);
-  }
+// Sync function to call AFTER localStorage has loaded
+function syncAllWithdrawalStates() {
+  WITHDRAWAL_PAIRS.forEach(pair => updatePairStates(pair));
 }
-
-// Initialize when DOM content is ready
-document.addEventListener('DOMContentLoaded', () => {
-  initWithdrawalRules();
-});  
 
 /* ---------- Transfer to Policy Section & Sub-Options Engine ---------- */
 document.addEventListener("DOMContentLoaded", () => {
