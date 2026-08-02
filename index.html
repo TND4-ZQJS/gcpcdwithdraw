@@ -329,34 +329,39 @@
           <label class="inline"><input id="ILWD_EBank_Islamic" class="persist" name="Accounttype" type="radio">Partial Withdrawal</label>
       </div>
     </section>
-    
-    <div class="grid-1" id="option_fullwithdraw">
+
+  <section class="section" id="option_fullwithdraw">
+    <div class="grid-1" >
   <div>
     <label class="inline"><input id="GCPWD_Full_GCP" class="persist" type="checkbox">Guaranteed Cash Payment - Full Withdrawal</label>
   </div>
     <div>
-    <label class="inline"><input id="GCPWD_Full_GCP" class="persist" type="checkbox">Guaranteed Cash Payment - Full Withdrawal</label>
+    <label class="inline"><input id="GCPWD_Full_CD" class="persist" type="checkbox">Cash Dividend - Full Withdrawal</label>
   </div>
     <div>
-    <label class="inline"><input id="GCPWD_Full_GCP" class="persist" type="checkbox">Guaranteed Cash Payment - Full Withdrawal</label>
+    <label class="inline"><input id="GCPWD_Full_FDF" class="persist" type="checkbox">Future Premium Deposit - Full Withdrawal</label>
   </div>
-      
-    </div>  
+</div>  
+  </section>
 
-    <div class="row">
-      <label style="flex:1">Withdrawal Option:
-        <select id="ILWD_WithdrawalOption" class="persist">
-          <option value="Amount">Amount (RM)</option>
-          <option value="Units">Units</option>
-        </select>
-      </label>
-    </div>
+  <section class="section" id="option_partialwithdraw">
+    <div class="grid-1" >
+  <div>
+    <label class="inline"><input id="GCPWD_Partial_GCP" class="persist" type="checkbox">Single Premium Top-Up</label>
+    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+  <div>
+    <label class="inline"><input id="ILWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
+    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+  <div>
+    <label class="inline"><input id="ILWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
+    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+  </div>
+</div>  
+  </section>
+    
 
-    <div id="fundsContainer"></div>
-
-    <div class="row">
-      <button type="button" id="addFundBtn" class="add-btn">+ Add Fund</button>
-    </div>
   </section>
   </div><!-- (END) STEP 3: Withdrawal -->
     
