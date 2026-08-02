@@ -227,7 +227,7 @@ input.dimmed-locked {
 </head>
 <body>
 <main>
-  <h1>GCP / Cash Dividend / FDF Withdrawal Form</h1>
+  <h1> / Cash Dividend / FDF Withdrawal Form</h1>
 
   <!-- Progress Tracker -->
   <div class="step-indicator" id="stepIndicator">
@@ -1455,13 +1455,7 @@ async function fillPDF(templateFileName, action = 'download') {
     safeSetText(form, "ILWD_Trustee_Name", getValue("ILWD_Trustee_Name"));
     safeSetText(form, "ILWD_Trustee_NIRC", getValue("ILWD_Trustee_NIRC"));
 
-    // Dynamic Fund Details mapping (if function exists)
-    if (typeof getPdfFormData === "function") {
-      const fundData = getPdfFormData();
-      Object.keys(fundData).forEach(fieldId => {
-        safeSetText(form, fieldId, fundData[fieldId]);
-      });
-    }
+    safeCheck(form, "GCPWD_Full_GCP", getChecked("GCPWD_Full_GCP"));
 
     // Transfer to Other Policy
     safeSetText(form, "ILWD_Trf_Amount", getValue("ILWD_Trf_Amount"));
