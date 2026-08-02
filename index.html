@@ -818,8 +818,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
   
-/* ---------- Full and Partial Withdrawal option logic ---------- */
-// 1. Define the paired fields (Full vs Partial)
+/* ---------- Full and Partial Withdrawal Option Logic ---------- */
+
 const WITHDRAWAL_PAIRS = [
   {
     type: 'GCP',
@@ -844,127 +844,33 @@ const WITHDRAWAL_PAIRS = [
   }
 ];
 
-// Helper to update visual dimmed state & disabled attribute
+// Helper to update visual dimmed state, tabindex, and disabled attribute
 function setElementState(element, isDisabled) {
   if (!element) return;
+
   element.disabled = isDisabled;
 
-  // Find parent container or label to apply dimmed class
+  if (isDisabled) {
+    element.setAttribute('tabindex', '-1');
+    element.classList.add('dimmed-locked');
+  } else {
+    element.removeAttribute('tabindex');
+    element.classList.remove('dimmed-locked');
+  }
+
+  // Find parent container (div or label) and toggle dimming class
   const container = element.closest('div') || element.closest('label');
   if (container) {
     if (isDisabled) {
-      container.classList.add('dimmed');
+      container.classList.add('dimmed-locked');
     } else {
-      container.classList.remove('dimmed');
+      container.classList.remove('dimmed-locked');
     }
   }
 }
 
-// Helper to trigger save event for localStorage persistence
-function triggerChangeEvent(element) {
-  if (element) {
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-}
-
-// Core rule validation logic
-function handleWithdrawalToggle(pair, source) {
-  const fullCheck = document.getElementById(pair.fullId);
-  const partialCheck = document.getElementById(pair.partialId);
-  const amountInput = document.getElementById(pair.amountId);
-
-  if (!fullCheck || !partialCheck) return;
-
-  // SCENARIO A: User clicked FULL option
-  if (source === 'full' && fullCheck.checked) {
-    const hasPartialValue = partialCheck.checked || (amountInput && amountInput.value.trim() !== '');
-
-    if (hasPartialValue) {
-      const confirmSwitch = confirm(
-        `Selecting Full Withdrawal for ${pair.label} will clear your existing Partial Withdrawal selection and amount.\n\nDo you want to proceed?`
-      );
-
-      if (!confirmSwitch) {
-        fullCheck.checked = false; // Revert checkbox selection
-        return;
-      }
-    }
-
-    // Clear partial selection & value
-    partialCheck.checked = false;
-    if (amountInput) {
-      amountInput.value = '';
-      triggerChangeEvent(amountInput);
-    }
-    triggerChangeEvent(partialCheck);
-  }
-
-  // SCENARIO B: User clicked PARTIAL option
-  if (source === 'partial' && partialCheck.checked) {
-    if (fullCheck.checked) {
-      const confirmSwitch = confirm(
-        `Selecting Partial Withdrawal for ${pair.label} will uncheck Full Withdrawal.\n\nDo you want to proceed?`
-      );
-
-      if (!confirmSwitch) {
-        partialCheck.checked = false; // Revert checkbox selection
-        return;
-      }
-    }
-
-    // Clear full selection
-    fullCheck.checked = false;
-    triggerChangeEvent(fullCheck);
-  }
-
-  // UPDATE DISABLED & DIMMED STATES
-  // 1. If Full is checked -> Disable Partial checkbox & Amount input
-  if (fullCheck.checked) {
-    setElementState(partialCheck, true);
-    setElementState(amountInput, true);
-    setElementState(fullCheck, false);
-  } 
-  // 2. If Partial is checked -> Disable Full checkbox (Enable Amount input)
-  else if (partialCheck.checked) {
-    setElementState(fullCheck, true);
-    setElementState(partialCheck, false);
-    setElementState(amountInput, false);
-  } 
-  // 3. If Neither is checked -> Enable all
-  else {
-    setElementState(fullCheck, false);
-    setElementState(partialCheck, false);
-    setElementState(amountInput, false);
-  }
-}
-
-// Setup Event Listeners and Initial Load State
-function initWithdrawalRules() {
-  WITHDRAWAL_PAIRS.forEach((pair) => {
-    const fullCheck = document.getElementById(pair.fullId);
-    const partialCheck = document.getElementById(pair.partialId);
-
-    if (fullCheck) {
-      fullCheck.addEventListener('change', (e) => {
-        // Only run logic if triggered by actual user click (isTrusted = true)
-        if (e.isTrusted) handleWithdrawalToggle(pair, 'full');
-      });
-    }
-
-    if (partialCheck) {
-      partialCheck.addEventListener('change', (e) => {
-        // Only run logic if triggered by actual user click (isTrusted = true)
-        if (e.isTrusted) handleWithdrawalToggle(pair, 'partial');
-      });
-    }
-
-    // Run initial sync once page/localStorage loads
-    syncInitialWithdrawalState(pair);
-  });
-}
-
-// Sync state on page load (without showing confirm prompts)
-function syncInitialWithdrawalState(pair) {
+// Sync UI states based on DOM element values
+function updatePairStates(pair) {
   const fullCheck = document.getElementById(pair.fullId);
   const partialCheck = document.getElementById(pair.partialId);
   const amountInput = document.getElementById(pair.amountId);
@@ -974,8 +880,10 @@ function syncInitialWithdrawalState(pair) {
   if (fullCheck.checked) {
     setElementState(partialCheck, true);
     setElementState(amountInput, true);
+    setElementState(fullCheck, false);
   } else if (partialCheck.checked) {
     setElementState(fullCheck, true);
+    setElementState(partialCheck, false);
     setElementState(amountInput, false);
   } else {
     setElementState(fullCheck, false);
@@ -984,9 +892,82 @@ function syncInitialWithdrawalState(pair) {
   }
 }
 
-// Initialize when DOM content is ready
+// Attach event listeners for user clicks
+function initWithdrawalRules() {
+  WITHDRAWAL_PAIRS.forEach((pair) => {
+    const fullCheck = document.getElementById(pair.fullId);
+    const partialCheck = document.getElementById(pair.partialId);
+    const amountInput = document.getElementById(pair.amountId);
+
+    // FULL CHECKBOX
+    if (fullCheck) {
+      fullCheck.addEventListener('change', () => {
+        if (fullCheck.checked) {
+          const hasPartialData = partialCheck.checked || (amountInput && amountInput.value.trim() !== '');
+
+          if (hasPartialData) {
+            const confirmSwitch = confirm(
+              `Selecting Full Withdrawal for ${pair.label} will clear your existing Partial Withdrawal selection and amount.\n\nDo you want to proceed?`
+            );
+
+            if (!confirmSwitch) {
+              fullCheck.checked = false;
+              if (typeof saveElValue === 'function') saveElValue(fullCheck);
+              return;
+            }
+          }
+
+          // Clear partial selection and text amount
+          partialCheck.checked = false;
+          if (typeof saveElValue === 'function') saveElValue(partialCheck);
+
+          if (amountInput) {
+            amountInput.value = '';
+            if (typeof saveElValue === 'function') saveElValue(amountInput);
+          }
+        }
+
+        if (typeof saveElValue === 'function') saveElValue(fullCheck);
+        updatePairStates(pair);
+      });
+    }
+
+    // PARTIAL CHECKBOX
+    if (partialCheck) {
+      partialCheck.addEventListener('change', () => {
+        if (!partialCheck.checked && amountInput) {
+          amountInput.value = '';
+          if (typeof saveElValue === 'function') saveElValue(amountInput);
+        }
+
+        if (typeof saveElValue === 'function') saveElValue(partialCheck);
+        updatePairStates(pair);
+      });
+    }
+  });
+}
+
+// Global sync to run after localStorage restoration
+function syncAllWithdrawalStates() {
+  WITHDRAWAL_PAIRS.forEach(pair => updatePairStates(pair));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // 1. Auto bind persistent fields
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    if (el.id && typeof autoBindSave === 'function') autoBindSave(el);
+  });
+
+  // 2. Load saved values from localStorage
+  if (typeof loadFromLocalStorage === 'function') loadFromLocalStorage();
+
+  // 3. Initialize rule listeners
   initWithdrawalRules();
+
+  // 4. Delayed sync guarantees DOM checkboxes reflect localStorage before locking
+  setTimeout(() => {
+    syncAllWithdrawalStates();
+  }, 50);
 });  
 
 /* ---------- Transfer to Policy Section & Sub-Options Engine ---------- */
