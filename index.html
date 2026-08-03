@@ -386,38 +386,34 @@ Premium Deposit under the policy for the first withdrawal</small>
   </div><!-- (END) STEP 3: Withdrawal -->
 
   <div class="wizard-step"><!-- Step 4: GCP and CD Options -->
-<!-- Master Toggle Checkbox -->
 <section class="section">
-  <div class="row">
-    <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
-      <input id="GCPCDOption_CB" type="checkbox" class="persist">
-      <span style="font-weight:500; color:var(--accent);">(Tick if) Wish to change Guaranteed Cash Payment or Cash Dividend option in policy</span>
-    </label>
-  </div>
+<div class="row">
+   <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
+   <input id="GCPCDOption_CB" type="checkbox" class="persist"><span style="font-weight:500; color:var(--accent);">(Tick if) Wish to change Guaranteed Cash Payment or Cash Dividend option in policy</span>
+   </label>
+</div>
+
+<section class="section" id="GCPOption_Sec">
+<h2>Guaranteed Cash Payment (GCP) Option</h2>
+<div class="row">
+  <div class="grid-2">
+  <label class="inline"><input id="GCPWD_GCP_Keep" class="persist" name="GCP_Option" type="checkbox"><b>Keep with Company</b></label>
+  <label class="inline"><input id="GCPWD_GCP_Payout" class="persist" name="GCP_Option" type="checkbox"><b>Payout</b></label>
+</div>
 </section>
 
-<!-- Main Collapsible Container -->
-<section class="section" id="GCPCDOption_Sec">
-  <!-- 1. GCP Option -->
-  <h2>Guaranteed Cash Payment (GCP) Option</h2>
-  <div class="row">
-    <div class="grid-2">
-      <label class="inline"><input id="GCPWD_GCP_Keep" class="persist" name="GCP_Option" type="checkbox"><b>Keep with Company</b></label>
-      <label class="inline"><input id="GCPWD_GCP_Payout" class="persist" name="GCP_Option" type="checkbox"><b>Payout</b></label>
-    </div>
-  </div>
-
-  <!-- 2. CD Option -->
-  <h2>Cash Dividend (CD) Option</h2>
-  <div class="row">
-    <div class="grid-2">
-      <label class="inline"><input id="GCPWD_CD_Keep" class="persist" name="CD_Option" type="checkbox"><b>Keep with Company</b></label>
-      <label class="inline"><input id="GCPWD_CD_Payout" class="persist" name="CD_Option" type="checkbox"><b>Payout</b></label>
-    </div>
-  </div>
+<section class="section" id="CDOption_Sec">
+<h2>Cash Dividend (CD) Option</h2>
+<div class="row">
+<div class="grid-2">
+<label class="inline"><input id="GCPWD_CD_Keep" class="persist" name="CD_Option" type="checkbox"><b>Keep with Company</b></label>
+<label class="inline"><input id="GCPWD_CD_Payout" class="persist" name="CD_Option" type="checkbox"><b>Payout</b></label>
+</div>
+</div>
 </section>
-    
-  </div><!--(END) Step 3: Option of Wtihdrawal -->
+</section>
+ 
+  </div><!--(END) Step 4: GCP and CD Options -->
 
  <div class="wizard-step"> <!-- Step 5: Transfer to other policy -->
   <section class="section">
@@ -1102,10 +1098,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* =========================================================
    GCP & CD OPTION MASTER TOGGLE & MUTUAL EXCLUSION ENGINE
+   (Targets Explicit Section IDs: GCPOption_Sec & CDPOption_Sec)
    ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
   const masterCB = document.getElementById("GCPCDOption_CB");
-  const section = document.getElementById("GCPCDOption_Sec");
+  
+  // Directly target both section IDs
+  const gcpSection = document.getElementById("GCPOption_Sec");
+  const cdSection = document.getElementById("CDPOption_Sec");
 
   const optionPairs = [
     { keepId: "GCPWD_GCP_Keep", payoutId: "GCPWD_GCP_Payout" },
@@ -1147,13 +1147,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* --- 3. MASTER SECTION TOGGLE & DATA WIPER --- */
-  function clearAndResetSection() {
-    if (!section) return;
+  /* --- 3. HELPER: DATA WIPER FOR A SECTION NODE --- */
+  function wipeSectionInputs(sectionNode) {
+    if (!sectionNode) return;
 
-    const childInputs = section.querySelectorAll("input[type='checkbox'], input[type='radio'], input[type='text']");
+    const childInputs = sectionNode.querySelectorAll("input[type='checkbox'], input[type='radio'], input[type='text']");
     childInputs.forEach((input) => {
-      // Uncheck / reset values
+      // Reset input values
       if (input.type === "checkbox" || input.type === "radio") {
         input.checked = false;
       } else {
@@ -1164,46 +1164,48 @@ document.addEventListener("DOMContentLoaded", () => {
       input.disabled = false;
       input.removeAttribute("tabindex");
 
-      // Remove visual dimming classes from containers
       const container = input.closest("label") || input.closest("div");
       if (container) container.classList.remove("dimmed-locked");
 
-      // Wipe from localStorage
+      // Remove from localStorage
       if (input.id) localStorage.removeItem(input.id);
       if (input.name) localStorage.removeItem(input.name);
     });
-
-    if (typeof showSaveStatus === "function") showSaveStatus();
   }
 
-  function syncSectionState(isUserAction = false) {
-    if (!masterCB || !section) return;
+  /* --- 4. MASTER TOGGLE CONTROL (HANDLES BOTH SECTIONS) --- */
+  function syncSectionsState(isUserAction = false) {
+    if (!masterCB) return;
 
-    if (masterCB.checked) {
-      section.style.display = "block";
-    } else {
-      section.style.display = "none";
-      // Only perform data wipe when explicitly unchecked by a user interaction
-      if (isUserAction) {
-        clearAndResetSection();
-      }
+    const isChecked = masterCB.checked;
+    const displayVal = isChecked ? "block" : "none";
+
+    // Toggle visibility for both explicitly defined sections
+    if (gcpSection) gcpSection.style.display = displayVal;
+    if (cdSection) cdSection.style.display = displayVal;
+
+    // Wipe child fields and localStorage ONLY when unchecked by direct user click
+    if (!isChecked && isUserAction) {
+      wipeSectionInputs(gcpSection);
+      wipeSectionInputs(cdSection);
+      if (typeof showSaveStatus === "function") showSaveStatus();
     }
   }
 
-  // Master Checkbox Event Listener
+  // Master Checkbox Listener
   if (masterCB) {
     masterCB.addEventListener("change", () => {
       if (typeof saveElValue === "function") saveElValue(masterCB);
-      syncSectionState(true);
+      syncSectionsState(true);
     });
   }
 
-  /* --- 4. INITIAL HYDRATION ON PAGE LOAD --- */
+  /* --- 5. INITIAL HYDRATION ON PAGE LOAD --- */
   setTimeout(() => {
-    // A. Sync Master Toggle Visibility
-    syncSectionState(false);
+    // A. Sync Both Sections' Visibility from Restored Master Checkbox State
+    syncSectionsState(false);
 
-    // B. Re-evaluate Mutual Exclusion Dimming for Restored States
+    // B. Re-apply Mutual Exclusion Dimming for Restored Checkboxes
     optionPairs.forEach(({ keepId, payoutId }) => {
       const keepEl = document.getElementById(keepId);
       const payoutEl = document.getElementById(payoutId);
