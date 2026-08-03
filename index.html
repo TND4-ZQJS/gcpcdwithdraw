@@ -385,35 +385,39 @@ Premium Deposit under the policy for the first withdrawal</small>
 
   </div><!-- (END) STEP 3: Withdrawal -->
 
-  <div class="wizard-step">
-  <section class="section">
-      <div class="row">
-  <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
-    <input id="GCPCDOption_CB" type="checkbox" class="persist">
-    <span style="font-weight:500; color:var(--accent);">(Tick if) Wish to change Guaranteed Cash Payment or Cash Dividend option in policy</span>
-  </label>
-     </div>
-
-  <section class="section" id="GCPCDOption_Sec">
-    <h2>Guaranteed Cash Payment (GCP) Option</h2>
-      <div class="row">
-      <div class="grid-2">
-          <label class="inline"><input id="GCPWD_GCP_Keep" class="persist" name="GCP_Option" type="checkbox"><b>Keep with Company</b></label>
-          <label class="inline"><input id="GCPWD_GCP_Payout" class="persist" name="GCP_Option" type="checkbox"><b>Payout</b></label>
-      </div>
-    </section>
-
-      <section class="section">
-    <h2>Cash Dividend (CD) Option</h2>
-      <div class="row">
-      <div class="grid-2">
-          <label class="inline"><input id="GCPWD_CD_Keep" class="persist" name="CD_Option" type="checkbox"><b>Keep with Company</b></label>
-          <label class="inline"><input id="GCPWD_CD_Payout" class="persist" name="CD_Option" type="checkbox"><b>Payout</b></label>
-      </div>
-    </section>
-  </section>
-    
+  <div class="wizard-step"><!-- Step 4: GCP and CD Options -->
+<!-- Master Toggle Checkbox -->
+<section class="section">
+  <div class="row">
+    <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
+      <input id="GCPCDOption_CB" type="checkbox" class="persist">
+      <span style="font-weight:500; color:var(--accent);">(Tick if) Wish to change Guaranteed Cash Payment or Cash Dividend option in policy</span>
+    </label>
   </div>
+</section>
+
+<!-- Main Collapsible Container -->
+<section class="section" id="GCPCDOption_Sec">
+  <!-- 1. GCP Option -->
+  <h2>Guaranteed Cash Payment (GCP) Option</h2>
+  <div class="row">
+    <div class="grid-2">
+      <label class="inline"><input id="GCPWD_GCP_Keep" class="persist" name="GCP_Option" type="checkbox"><b>Keep with Company</b></label>
+      <label class="inline"><input id="GCPWD_GCP_Payout" class="persist" name="GCP_Option" type="checkbox"><b>Payout</b></label>
+    </div>
+  </div>
+
+  <!-- 2. CD Option -->
+  <h2>Cash Dividend (CD) Option</h2>
+  <div class="row">
+    <div class="grid-2">
+      <label class="inline"><input id="GCPWD_CD_Keep" class="persist" name="CD_Option" type="checkbox"><b>Keep with Company</b></label>
+      <label class="inline"><input id="GCPWD_CD_Payout" class="persist" name="CD_Option" type="checkbox"><b>Payout</b></label>
+    </div>
+  </div>
+</section>
+    
+  </div><!--(END) Step 3: Option of Wtihdrawal -->
 
  <div class="wizard-step"> <!-- Step 5: Transfer to other policy -->
   <section class="section">
