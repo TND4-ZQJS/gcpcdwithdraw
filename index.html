@@ -555,7 +555,7 @@ Premium Deposit under the policy for the first withdrawal</small>
     <h2>Policy Owner Signature</h2>
 <div class="row">
   <label style="flex:1">Name: 
-    <span id="ILWD_EBank_Name_Display" style="font-weight: 600;">-</span>
+    <span id="GCPWD_EBank_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>
 
@@ -574,7 +574,7 @@ Premium Deposit under the policy for the first withdrawal</small>
     <h3>Witness Signature</h3>
 <div class="row">
   <label style="flex:1">Name: 
-    <span id="ILWD_Witness_Name_Display" style="font-weight: 600;">-</span>
+    <span id="GCPWD_Witness_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>
 
@@ -591,7 +591,7 @@ Premium Deposit under the policy for the first withdrawal</small>
     <h3>Trustee Signature</h3>
 <div class="row">
   <label style="flex:1">Name: 
-    <span id="ILWD_Trustee_Name_Display" style="font-weight: 600;">-</span>
+    <span id="GCSPWD_Trustee_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>
 
@@ -1167,11 +1167,11 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ---------- Signature Names Display ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const fieldMap = {
-    "ILWD_PO_Name":      "ILWD_EBank_Name_Display",
-    "ILWD_Witness_Name": "ILWD_Witness_Name_Display",
-    "ILWD_Witness_NIRC": "ILWD_Witness_NIRC_Display",
-    "ILWD_Trustee_Name": "ILWD_Trustee_Name_Display",
-    "ILWD_Trustee_NIRC": "ILWD_Trustee_NIRC_Display"
+    "GCPWD_PO_Name":      "GCPWD_EBank_Name_Display",
+    "GCPWD_Witness_Name": "GCPWD_Witness_Name_Display",
+    "GCPWD_Witness_NIRC": "GCPWD_Witness_NIRC_Display",
+    "GCPWD_Trustee_Name": "GCPWD_Trustee_Name_Display",
+    "GCPWD_Trustee_NIRC": "GCPWD_Trustee_NIRC_Display"
   };
 
   function updateDisplay(storageKey, displayId, directValue = null) {
