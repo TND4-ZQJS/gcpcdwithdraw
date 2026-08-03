@@ -916,91 +916,32 @@ function syncAllSectionVisibilities() {
   SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
     toggleSectionVisibility(checkboxId, sectionId);
   });
+}
+
 
 /* =========================================================
-   SECTION TOGGLES ENGINE (Safe LocalStorage & Wipe)
+   STEP 3: DOM INITIALIZATION (PLACED RIGHT AFTER STEP 2)
    ========================================================= */
 
-const SECTION_TOGGLES = [
-  { checkboxId: 'full_withdraw_CB', sectionId: 'option_fullwithdraw' },
-  { checkboxId: 'partial_withdraw_CB', sectionId: 'option_partialwithdraw' },
-  { checkboxId: 'GCPCDOption_CB', sectionId: 'GCPCDOption_Sec' }
-];
-
-// Helper: Clear inputs inside a hidden section
-function clearSectionInputs(section) {
-  if (!section) return;
-
-  const childInputs = section.querySelectorAll("input, select, textarea");
-  childInputs.forEach((input) => {
-    if (input.type === "checkbox" || input.type === "radio") {
-      input.checked = false;
-    } else {
-      input.value = "";
-    }
-
-    input.disabled = false;
-    input.removeAttribute("tabindex");
-    input.classList.remove("dimmed-locked");
-
-    const container = input.closest("label") || input.closest("div");
-    if (container) container.classList.remove("dimmed-locked");
-
-    if (input.id) localStorage.removeItem(input.id);
-    if (input.name) localStorage.removeItem(input.name);
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Bind persistent fields to localStorage
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    if (el.id && typeof autoBindSave === 'function') autoBindSave(el);
   });
-}
 
-// Toggle visibility; strictly wipe ONLY when triggered by a user action
-function toggleSectionVisibility(checkboxId, sectionId, isUserAction = false) {
-  const checkbox = document.getElementById(checkboxId);
-  const section = document.getElementById(sectionId);
+  // 2. Load restored values from localStorage
+  if (typeof loadFromLocalStorage === 'function') loadFromLocalStorage();
 
-  if (!checkbox || !section) return;
+  // 3. Attach event listeners for rules
+  if (typeof initWithdrawalRules === 'function') initWithdrawalRules();
+  initSectionToggleRules(); 
 
-  if (checkbox.checked) {
-    section.style.setProperty('display', 'block', 'important');
-  } else {
-    section.style.setProperty('display', 'none', 'important');
-    if (isUserAction) {
-      clearSectionInputs(section);
-    }
-  }
-}
-
-// Attach CHANGE listeners (removed 'click' to avoid double-triggering)
-function initSectionToggleRules() {
-  SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
-    const checkbox = document.getElementById(checkboxId);
-
-    if (checkbox) {
-      checkbox.addEventListener('change', () => {
-        if (typeof saveElValue === 'function') {
-          saveElValue(checkbox);
-        } else if (checkbox.id) {
-          localStorage.setItem(checkbox.id, checkbox.checked);
-        }
-        toggleSectionVisibility(checkboxId, sectionId, true); // true = user-initiated wipe allowed
-      });
-    }
-  });
-}
-
-// Restore saved checkbox state on refresh WITHOUT wiping child fields
-function syncAllSectionVisibilities() {
-  SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
-    const checkbox = document.getElementById(checkboxId);
-
-    if (checkbox) {
-      const saved = localStorage.getItem(checkboxId);
-      if (saved !== null) {
-        checkbox.checked = (saved === 'true');
-      }
-    }
-
-    toggleSectionVisibility(checkboxId, sectionId, false); // false = startup sync, do NOT wipe
-  });
-}
+  // 4. Force UI refresh after localStorage restoration finishes
+  setTimeout(() => {
+    if (typeof syncAllWithdrawalStates === 'function') syncAllWithdrawalStates();
+    syncAllSectionVisibilities(); 
+  }, 50);
+});
 
   
 /* ---------- Full and Partial Withdrawal Option Logic ---------- */
@@ -1154,105 +1095,6 @@ document.addEventListener('DOMContentLoaded', () => {
     syncAllWithdrawalStates();
   }, 50);
 });  
-
-/* =========================================================
-   GCP and CD SECTION TOGGLES ENGINE (With Auto-Wipe & LocalStorage Sync)
-   ========================================================= */
-
-const SECTION_TOGGLES = [
-  {
-    checkboxId: 'full_withdraw_CB',
-    sectionId: 'option_fullwithdraw'
-  },
-  {
-    checkboxId: 'partial_withdraw_CB',
-    sectionId: 'option_partialwithdraw'
-  },
-  {
-    checkboxId: 'GCPCDOption_CB',
-    sectionId: 'GCPCDOption_Sec'
-  }
-];
-
-// Clears all form inputs inside a container section and removes them from localStorage
-function clearSectionInputs(section) {
-  if (!section) return;
-
-  const childInputs = section.querySelectorAll("input, select, textarea");
-  childInputs.forEach((input) => {
-    // 1. Reset DOM values
-    if (input.type === "checkbox" || input.type === "radio") {
-      input.checked = false;
-    } else {
-      input.value = "";
-    }
-
-    // 2. Re-enable locked or dimmed states
-    input.disabled = false;
-    input.removeAttribute("tabindex");
-    input.classList.remove("dimmed-locked");
-
-    const container = input.closest("label") || input.closest("div");
-    if (container) container.classList.remove("dimmed-locked");
-
-    // 3. Clear from localStorage
-    if (input.id) localStorage.removeItem(input.id);
-    if (input.name) localStorage.removeItem(input.name);
-  });
-}
-
-// Toggle inline display property & wipe data if unchecked
-function toggleSectionVisibility(checkboxId, sectionId) {
-  const checkbox = document.getElementById(checkboxId);
-  const section = document.getElementById(sectionId);
-
-  if (!checkbox || !section) return;
-
-  if (checkbox.checked) {
-    section.style.setProperty('display', 'block', 'important');
-  } else {
-    section.style.setProperty('display', 'none', 'important');
-    clearSectionInputs(section); // Wipes child inputs and localStorage when toggled OFF
-  }
-}
-
-// Attach change and click listeners to section checkboxes
-function initSectionToggleRules() {
-  SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
-    const checkbox = document.getElementById(checkboxId);
-
-    if (checkbox) {
-      ['change', 'click'].forEach(eventType => {
-        checkbox.addEventListener(eventType, () => {
-          if (typeof saveElValue === 'function') {
-            saveElValue(checkbox);
-          } else {
-            localStorage.setItem(checkbox.id, checkbox.checked);
-          }
-          toggleSectionVisibility(checkboxId, sectionId);
-        });
-      });
-    }
-  });
-}
-
-// Sync section visibilities & retrieve state on page load
-function syncAllSectionVisibilities() {
-  SECTION_TOGGLES.forEach(({ checkboxId, sectionId }) => {
-    const checkbox = document.getElementById(checkboxId);
-    
-    // Explicit direct retrieval from localStorage on refresh
-    if (checkbox) {
-      const saved = localStorage.getItem(checkboxId);
-      if (saved !== null) {
-        checkbox.checked = (saved === 'true');
-      }
-    }
-    
-    toggleSectionVisibility(checkboxId, sectionId);
-  });
-}
-
 
 /* ---------- Mutual Exclusion Rules for GCP & CD Options ---------- */
 document.addEventListener("DOMContentLoaded", () => {
