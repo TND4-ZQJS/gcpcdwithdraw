@@ -1486,6 +1486,12 @@ async function fillPDF(templateFileName, action = 'download') {
     safeSetText(form, "GCPWD_Partial_CD_Amt", getValue("GCPWD_Partial_CD_Amt"));
     safeSetText(form, "GCPWD_Partial_FDF_Amt", getValue("GCPWD_Partial_FDF_Amt"));
 
+    // GCP, CD Option
+    safeCheck(form, "GCPWD_GCP_Keep", getChecked("GCPWD_GCP_Keep"));
+    safeCheck(form, "GCPWD_GCP_Payout", getChecked("GCPWD_GCP_Payout"));
+    safeCheck(form, "GCPWD_CD_Keep", getChecked("GCPWD_CD_Keep"));
+    safeCheck(form, "GCPWD_CD_Payout", getChecked("GCPWD_CD_Payout"));
+    
     // Transfer to Other Policy
     safeSetText(form, "GCPWD_Trf_Amount", getValue("GCPWD_Trf_Amount"));
     safeSetText(form, "GCPWD_Trf_PolicyNo", getValue("GCPWD_Trf_PolicyNo"));
