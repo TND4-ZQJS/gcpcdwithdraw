@@ -227,7 +227,7 @@ input.dimmed-locked {
 </head>
 <body>
 <main>
-  <h1> / Cash Dividend / FDF Withdrawal Form</h1>
+  <h1>GCP / Cash Dividend / FDF Withdrawal Form</h1>
 
   <!-- Progress Tracker -->
   <div class="step-indicator" id="stepIndicator">
@@ -258,19 +258,32 @@ input.dimmed-locked {
    <section class="section">
      <h2>Policy Owner Details</h2>
 
+<div class="row">
+    <label style="flex:1">Policy No.
+      <input id="GCPWD_PolicyNo" type="text" class="persist" placeholder="Enter Policy No.">
+    </label>
+    </div>
+</section>
+
+    </div> <!-- (END) STEP 1: Policy -->
+
+  <div class="wizard-step"> <!-- Step 2: Person details -->
+   <section class="section">
+     <h2>Policy Owner Details</h2>
+
     <div class="row">
     <label style="flex:1">Policy Owner
-      <input id="ILWD_PO_Name" type="text" class="persist" placeholder="Enter Name">
+      <input id="GCPWD_PO_Name" type="text" class="persist" placeholder="Enter Name">
     </label>
     </div>
      
  <div class="row">
   <label style="flex:1">NIRC/Passport No.
-      <input id="ILWD_PO_NIRC" type="text" class="persist" placeholder="Enter NIRC/Passport No.">
+      <input id="GCPWD_PO_NIRC" type="text" class="persist" placeholder="Enter NIRC/Passport No.">
     </label>
 
   <label style="flex:1">Mobile No.
-      <input id="ILWD_PO_Mobile" type="text" class="persist" placeholder="Enter Mobile No.">
+      <input id="GCPWD_PO_Mobile" type="text" class="persist" placeholder="Enter Mobile No.">
   </label> 
 </div> 
       </section>
@@ -281,14 +294,14 @@ input.dimmed-locked {
 
        <div class="row">
   <label style="display:flex; align-items:center; gap:4px; cursor:pointer; background: #f0f7ff; padding: 5px; border-radius: 8px;">
-    <input id="ILWD_Insured_is_PO" type="checkbox" class="persist">
+    <input id="GCPWD_Insured_is_PO" type="checkbox" class="persist">
     <span style="font-weight:500; color:var(--accent);">Insured is also Policy Owner</span>
   </label>
      </div>
   
     <div class="row">
     <label style="flex:1">Proposed Life Insured / Insured
-      <input id="ILWD_Insured_Name" type="text" class="persist" placeholder="Enter Name">
+      <input id="GCPWD_Insured_Name" type="text" class="persist" placeholder="Enter Name">
     </label>
     </div>
      
@@ -300,17 +313,17 @@ input.dimmed-locked {
       
     <div class="row">
     <label style="flex:1">Witness
-      <input id="ILWD_Witness_Name" type="text" class="persist" placeholder="Enter Name">
+      <input id="GCPWD_Witness_Name" type="text" class="persist" placeholder="Enter Name">
     </label>
     </div>
 
      <div class="row">
     <label style="flex:1">NIRC/Passport No.
-      <input id="ILWD_Witness_NIRC" type="text" class="persist" placeholder="Enter Name">
+      <input id="GCPWD_Witness_NIRC" type="text" class="persist" placeholder="Enter Name">
     </label>
 
       <label style="flex:1">Mobile No.
-      <input id="ILWD_Witness_Mobile" type="text" class="persist">
+      <input id="GCPWD_Witness_Mobile" type="text" class="persist">
   </label>    
     </div>
 
@@ -322,13 +335,13 @@ input.dimmed-locked {
       
     <div class="row">
     <label style="flex:1">Trustee/Nominee
-      <input id="ILWD_Trustee_Name" type="text" class="persist" placeholder="Enter Name">
+      <input id="GCPWD_Trustee_Name" type="text" class="persist" placeholder="Enter Name">
     </label>
     </div>
 
      <div class="row">
     <label style="flex:1">NIRC/Passport No.
-      <input id="ILWD_Trustee_NIRC" type="text" class="persist" placeholder="Enter NIRC/Passport no.">
+      <input id="GCPWD_Trustee_NIRC" type="text" class="persist" placeholder="Enter NIRC/Passport no.">
     </label>
 
     </div>
@@ -400,11 +413,11 @@ Premium Deposit under the policy for the first withdrawal</small>
 
     <div class="row">
     <label style="flex:1">Transfer the Partial Withdrawal amount
-      <input id="ILWD_Trf_Amount" type="text" class="persist" placeholder="Enter Amount (RM)">
+      <input id="GCPWD_Trf_Amount" type="text" class="persist" placeholder="Enter Amount (RM)">
     </label>
       
     <label style="flex:1">to Policy No.
-      <input id="ILWD_Trf_PolicyNo" type="text" class="persist" placeholder="Enter Policy No.">
+      <input id="GCPWD_Trf_PolicyNo" type="text" class="persist" placeholder="Enter Policy No.">
     </label>
     </div>
 
@@ -414,28 +427,28 @@ Premium Deposit under the policy for the first withdrawal</small>
     
 <div class="grid-2">
   <div>
-    <label class="inline"><input id="ILWD_Trf_FYPNewB" class="persist" type="checkbox">First year premuim for new application</label>
-    <input id="ILWD_Trf_FYPNewB_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Trf_FYPNewB" class="persist" type="checkbox">First year premuim for new application</label>
+    <input id="GCPWD_Trf_FYPNewB_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
   
   <div>
-    <label class="inline"><input id="ILWD_Trf_Premium" class="persist" type="checkbox">Premium</label>
-    <input id="ILWD_Trf_Premium_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Trf_Premium" class="persist" type="checkbox">Premium</label>
+    <input id="GCPWD_Trf_Premium_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
   
   <div>
-    <label class="inline"><input id="ILWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
-    <input id="ILWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Trf_TopUp" class="persist" type="checkbox">Single Premium Top-Up</label>
+    <input id="GCPWD_Trf_TopUp_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
   
   <div>
-    <label class="inline"><input id="ILWD_Trf_Loan" class="persist" type="checkbox">Policy Loan repayment</label>
-    <input id="ILWD_Trf_Loan_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Trf_Loan" class="persist" type="checkbox">Policy Loan repayment</label>
+    <input id="GCPWD_Trf_Loan_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
   
   <div>
-    <label class="inline"><input id="ILWD_Trf_APL" class="persist" type="checkbox">Automatic Premium Loan repayment</label>
-    <input id="ILWD_Trf_APL_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
+    <label class="inline"><input id="GCPWD_Trf_APL" class="persist" type="checkbox">Automatic Premium Loan repayment</label>
+    <input id="GCPWD_Trf_APL_Amt" class="persist" type="text" placeholder="Enter Amount (RM)" style="display:none;">
   </div>
 </div>
   
@@ -448,25 +461,25 @@ Premium Deposit under the policy for the first withdrawal</small>
   <h2>E Banking Details</h2>
 
    <div class="row">
-      <label style="flex:1">Account Holder Name<input id="ILWD_EBank_Name" class="persist" type="text" placeholder="Enter name">
+      <label style="flex:1">Account Holder Name<input id="GCPWD_EBank_Name" class="persist" type="text" placeholder="Enter name">
       </label>
    </div>
 
    <div class="row">
       <label style="flex:1">New IC/Old IC/Passport No/Co. Registration No. (as per bank’s records)
-        <input id="ILWD_EBank_NIRC" class="persist" type="text" placeholder="Enter NIRC/Passport no.">
+        <input id="GCPWD_EBank_NIRC" class="persist" type="text" placeholder="Enter NIRC/Passport no.">
       </label>
    </div>
 
    <div class="row">
       <label style="flex:1">Bank Account No.
-        <input id="ILWD_EBank_AccNo" class="persist" type="text" placeholder="Enter no.">
+        <input id="GCPWD_EBank_AccNo" class="persist" type="text" placeholder="Enter no.">
       </label>
    </div>
 
    <div class="row">
       <label style="flex:1">Name of Bank
-        <select id="ILWD_EBank_Bank" class="persist">
+        <select id="GCPWD_EBank_Bank" class="persist">
           <option value="">-- Select Bank --</option>
           <option value="Maybank">Maybank</option>
           <option value="CIMB Bank">CIMB Bank</option>
@@ -491,8 +504,8 @@ Premium Deposit under the policy for the first withdrawal</small>
     <section class="section">
       <div class="row"><label>Bank Account Type</label></div>
       <div class="grid-2">
-          <label class="inline"><input id="ILWD_EBank_Conventional" class="persist" name="Accounttype" type="radio"> Conventional</label>
-          <label class="inline"><input id="ILWD_EBank_Islamic" class="persist" name="Accounttype" type="radio"> Islamic</label>
+          <label class="inline"><input id="GCPWD_EBank_Conventional" class="persist" name="Accounttype" type="radio"> Conventional</label>
+          <label class="inline"><input id="GCPWD_EBank_Islamic" class="persist" name="Accounttype" type="radio"> Islamic</label>
       </div>
     </section>
   </section>  
@@ -504,7 +517,7 @@ Premium Deposit under the policy for the first withdrawal</small>
 
   <div class="row">
     <label style="flex:1">Signed at (State)
-      <select id="ILWD_Signed_State" class="persist">
+      <select id="GCPWD_Signed_State" class="persist">
         <option value="">-- Select State --</option>
         <option>SELANGOR</option><option>K.LUMPUR</option><option>MELAKA</option><option>JOHOR</option>
         <option>N.SEMBILAN</option><option>PENANG</option><option>PERAK</option><option>SABAH</option>
@@ -516,7 +529,7 @@ Premium Deposit under the policy for the first withdrawal</small>
   
   <div class="row">
     <label style="flex:1">Day
-      <select id="ILWD_Signed_Day" class="persist">
+      <select id="GCPWD_Signed_Day" class="persist">
         <option value="">-- Day (DD) --</option>
         <option>01</option><option>02</option><option>03</option><option>04</option>
         <option>05</option><option>06</option><option>07</option><option>08</option>
@@ -529,7 +542,7 @@ Premium Deposit under the policy for the first withdrawal</small>
       </select>
     </label>
     <label style="flex:1">Month
-      <select id="ILWD_Signed_Month" class="persist">
+      <select id="GCPWD_Signed_Month" class="persist">
         <option value="">-- Month --</option>
         <option>JANUARY</option><option>FEBRUARY</option><option>MARCH</option><option>APRIL</option>
         <option>MAY</option><option>JUNE</option><option>JULY</option><option>AUGUST</option>
@@ -537,7 +550,7 @@ Premium Deposit under the policy for the first withdrawal</small>
       </select>
     </label>
     <label style="flex:1">Year
-      <select id="ILWD_Signed_Year" class="persist">
+      <select id="GCPWD_Signed_Year" class="persist">
         <option value="">-- Year (YYYY) --</option>
         <option>2025</option><option>2026</option>
       </select>
@@ -555,7 +568,7 @@ Premium Deposit under the policy for the first withdrawal</small>
     <h2>Policy Owner Signature</h2>
 <div class="row">
   <label style="flex:1">Name: 
-    <span id="ILWD_EBank_Name_Display" style="font-weight: 600;">-</span>
+    <span id="GCPWD_EBank_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>
 
@@ -574,7 +587,7 @@ Premium Deposit under the policy for the first withdrawal</small>
     <h3>Witness Signature</h3>
 <div class="row">
   <label style="flex:1">Name: 
-    <span id="ILWD_Witness_Name_Display" style="font-weight: 600;">-</span>
+    <span id="GCPWD_Witness_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>
 
@@ -591,7 +604,7 @@ Premium Deposit under the policy for the first withdrawal</small>
     <h3>Trustee Signature</h3>
 <div class="row">
   <label style="flex:1">Name: 
-    <span id="ILWD_Trustee_Name_Display" style="font-weight: 600;">-</span>
+    <span id="GCPWD_Trustee_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>
 
@@ -656,12 +669,14 @@ Premium Deposit under the policy for the first withdrawal</small>
 
 <div id="saveStatus">Saved</div>
 
+
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>
 <script>
 /* ---------- CONFIG ---------- */
 const PDF_FILENAME = "Application for Fund Withdrawal_LF1050_fillable.pdf";
-const FORM_ID = "ilpwd";
+const FORM_ID = "GCPWD
+";
 
 /* ---------- DOM Helpers ---------- */
 const $ = (id) => document.getElementById(id);
@@ -726,14 +741,14 @@ window.addEventListener("DOMContentLoaded", () => {
 /* ---------- Combined PO -> E-Bank & PO -> Insured Sync Helper ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   // Elements
-  const poName    = document.getElementById("ILWD_PO_Name");
-  const poNric    = document.getElementById("ILWD_PO_NIRC");
+  const poName    = document.getElementById("GCPWD_PO_Name");
+  const poNric    = document.getElementById("GCPWD_PO_NIRC");
 
-  const eBankName = document.getElementById("ILWD_EBank_Name");
-  const eBankNric = document.getElementById("ILWD_EBank_NIRC");
+  const eBankName = document.getElementById("GCPWD_EBank_Name");
+  const eBankNric = document.getElementById("GCPWD_EBank_NIRC");
 
-  const insuredPOCheckbox = document.getElementById("ILWD_Insured_is_PO");
-  const insuredName        = document.getElementById("ILWD_Insured_Name");
+  const insuredPOCheckbox = document.getElementById("GCPWD_Insured_is_PO");
+  const insuredName        = document.getElementById("GCPWD_Insured_Name");
 
   // Helper to safely format value to Uppercase
   const toUpper = (val) => (val || "").toUpperCase();
@@ -1072,11 +1087,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Sub-checkboxes mapped to their amount textboxes
   const subTransferFields = [
-    { cbId: "ILWD_Trf_FYPNewB", amtId: "ILWD_Trf_FYPNewB_Amt" },
-    { cbId: "ILWD_Trf_Premium",  amtId: "ILWD_Trf_Premium_Amt" },
-    { cbId: "ILWD_Trf_TopUp",    amtId: "ILWD_Trf_TopUp_Amt" },
-    { cbId: "ILWD_Trf_Loan",     amtId: "ILWD_Trf_Loan_Amt" },
-    { cbId: "ILWD_Trf_APL",      amtId: "ILWD_Trf_APL_Amt" }
+    { cbId: "GCPWD_Trf_FYPNewB", amtId: "GCPWD_Trf_FYPNewB_Amt" },
+    { cbId: "GCPWD_Trf_Premium",  amtId: "GCPWD_Trf_Premium_Amt" },
+    { cbId: "GCPWD_Trf_TopUp",    amtId: "GCPWD_Trf_TopUp_Amt" },
+    { cbId: "GCPWD_Trf_Loan",     amtId: "GCPWD_Trf_Loan_Amt" },
+    { cbId: "GCPWD_Trf_APL",      amtId: "GCPWD_Trf_APL_Amt" }
   ];
 
   /* --------------------------------------------------------------------------
@@ -1167,11 +1182,11 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ---------- Signature Names Display ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const fieldMap = {
-    "ILWD_PO_Name":      "ILWD_EBank_Name_Display",
-    "ILWD_Witness_Name": "ILWD_Witness_Name_Display",
-    "ILWD_Witness_NIRC": "ILWD_Witness_NIRC_Display",
-    "ILWD_Trustee_Name": "ILWD_Trustee_Name_Display",
-    "ILWD_Trustee_NIRC": "ILWD_Trustee_NIRC_Display"
+    "GCPWD_PO_Name":      "GCPWD_EBank_Name_Display",
+    "GCPWD_Witness_Name": "GCPWD_Witness_Name_Display",
+    "GCPWD_Witness_NIRC": "GCPWD_Witness_NIRC_Display",
+    "GCPWD_Trustee_Name": "GCPWD_Trustee_Name_Display",
+    "GCPWD_Trustee_NIRC": "GCPWD_Trustee_NIRC_Display"
   };
 
   function updateDisplay(storageKey, displayId, directValue = null) {
@@ -1239,9 +1254,9 @@ function setSignedDateToday() {
   const yearStr = String(now.getFullYear());
 
   // 4. Target elements
-  const daySelect = document.getElementById('ILWD_Signed_Day');
-  const monthSelect = document.getElementById('ILWD_Signed_Month');
-  const yearSelect = document.getElementById('ILWD_Signed_Year');
+  const daySelect = document.getElementById('GCPWD_Signed_Day');
+  const monthSelect = document.getElementById('GCPWD_Signed_Month');
+  const yearSelect = document.getElementById('GCPWD_Signed_Year');
 
   if (daySelect && monthSelect && yearSelect) {
     // Set values
@@ -1255,9 +1270,9 @@ function setSignedDateToday() {
     yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
 
     // Explicitly write to localStorage if you store form fields by ID directly
-    saveToLocalStorage('ILWD_Signed_Day', dayStr);
-    saveToLocalStorage('ILWD_Signed_Month', monthStr);
-    saveToLocalStorage('ILWD_Signed_Year', yearStr);
+    saveToLocalStorage('GCPWD_Signed_Day', dayStr);
+    saveToLocalStorage('GCPWD_Signed_Month', monthStr);
+    saveToLocalStorage('GCPWD_Signed_Year', yearStr);
   }
 }
 
@@ -1369,7 +1384,7 @@ async function embedSignatureToPdf(pdfDoc, pageIndex, options) {
 
   // 1. Construct localStorage key matching your signature engine format
   // Tries `sig_${FORM_ID}_${role}`, then `sig_${role}`, then `${role}`
-  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "ILWD";
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "GCPWD";
   const primaryKey = `sig_${formId}_${role}`;
   
   let sigDataUri = localStorage.getItem(primaryKey) 
@@ -1440,20 +1455,20 @@ async function fillPDF(templateFileName, action = 'download') {
 
     // 2. Load PDF document & get interactive form
     const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-    const form = pdfDoc.getForm(); // <-- FIXED: Form initialization added
+    const form = pdfDoc.getForm(); // Interactive form initialization
 
     // Policy and People
-    safeSetText(form, "ILWD_PolicyNo", getValue("ILWD_PolicyNo"));
-    safeSetText(form, "ILWD_Insured_Name", getValue("ILWD_Insured_Name"));
-    safeSetText(form, "ILWD_Reason", getValue("ILWD_Reason"));
-    safeSetText(form, "ILWD_PO_NIRC", getValue("ILWD_PO_NIRC"));
-    safeSetText(form, "ILWD_PO_Name", getValue("ILWD_PO_Name"));
-    safeSetText(form, "ILWD_PO_Mobile", getValue("ILWD_PO_Mobile"));
-    safeSetText(form, "ILWD_Witness_Name", getValue("ILWD_Witness_Name"));
-    safeSetText(form, "ILWD_Witness_NIRC", getValue("ILWD_Witness_NIRC"));
-    safeSetText(form, "ILWD_Witness_Mobile", getValue("ILWD_Witness_Mobile"));
-    safeSetText(form, "ILWD_Trustee_Name", getValue("ILWD_Trustee_Name"));
-    safeSetText(form, "ILWD_Trustee_NIRC", getValue("ILWD_Trustee_NIRC"));
+    safeSetText(form, "GCPWD_PolicyNo", getValue("GCPWD_PolicyNo"));
+    safeSetText(form, "GCPWD_Insured_Name", getValue("GCPWD_Insured_Name"));
+    safeSetText(form, "GCPWD_Reason", getValue("GCPWD_Reason"));
+    safeSetText(form, "GCPWD_PO_NIRC", getValue("GCPWD_PO_NIRC"));
+    safeSetText(form, "GCPWD_PO_Name", getValue("GCPWD_PO_Name"));
+    safeSetText(form, "GCPWD_PO_Mobile", getValue("GCPWD_PO_Mobile"));
+    safeSetText(form, "GCPWD_Witness_Name", getValue("GCPWD_Witness_Name"));
+    safeSetText(form, "GCPWD_Witness_NIRC", getValue("GCPWD_Witness_NIRC"));
+    safeSetText(form, "GCPWD_Witness_Mobile", getValue("GCPWD_Witness_Mobile"));
+    safeSetText(form, "GCPWD_Trustee_Name", getValue("GCPWD_Trustee_Name"));
+    safeSetText(form, "GCPWD_Trustee_NIRC", getValue("GCPWD_Trustee_NIRC"));
 
     // GCP, CD, FDF Withdrawal
     safeCheck(form, "GCPWD_Full_GCP", getChecked("GCPWD_Full_GCP"));
@@ -1464,34 +1479,33 @@ async function fillPDF(templateFileName, action = 'download') {
     safeSetText(form, "GCPWD_Partial_FDF_Amt", getValue("GCPWD_Partial_FDF_Amt"));
 
     // Transfer to Other Policy
-    safeSetText(form, "ILWD_Trf_Amount", getValue("ILWD_Trf_Amount"));
-    safeSetText(form, "ILWD_Trf_PolicyNo", getValue("ILWD_Trf_PolicyNo"));
-    safeSetText(form, "ILWD_Trf_FYPNewB_Amt", getValue("ILWD_Trf_FYPNewB_Amt"));
-    safeSetText(form, "ILWD_Trf_Premium_Amt", getValue("ILWD_Trf_Premium_Amt"));
-    safeSetText(form, "ILWD_Trf_TopUp_Amt", getValue("ILWD_Trf_TopUp_Amt"));
-    safeSetText(form, "ILWD_Trf_Loan_Amt", getValue("ILWD_Trf_Loan_Amt"));
-    safeSetText(form, "ILWD_Trf_APL_Amt", getValue("ILWD_Trf_APL_Amt"));
-    safeCheck(form, "LWD_Trf_FYPNewB", getChecked("LWD_Trf_FYPNewB"));
-    safeCheck(form, "ILWD_Trf_TopUp", getChecked("ILWD_Trf_TopUp"));
-    safeCheck(form, "ILWD_Trf_Loan", getChecked("ILWD_Trf_Loan"));
-    safeCheck(form, "ILWD_Trf_APL", getChecked("ILWD_Trf_APL"));
-    safeCheck(form, "ILWD_Trf_Premium", getChecked("ILWD_Trf_Premium"));
-  
+    safeSetText(form, "GCPWD_Trf_Amount", getValue("GCPWD_Trf_Amount"));
+    safeSetText(form, "GCPWD_Trf_PolicyNo", getValue("GCPWD_Trf_PolicyNo"));
+    safeSetText(form, "GCPWD_Trf_FYPNewB_Amt", getValue("GCPWD_Trf_FYPNewB_Amt"));
+    safeSetText(form, "GCPWD_Trf_Premium_Amt", getValue("GCPWD_Trf_Premium_Amt"));
+    safeSetText(form, "GCPWD_Trf_TopUp_Amt", getValue("GCPWD_Trf_TopUp_Amt"));
+    safeSetText(form, "GCPWD_Trf_Loan_Amt", getValue("GCPWD_Trf_Loan_Amt"));
+    safeSetText(form, "GCPWD_Trf_APL_Amt", getValue("GCPWD_Trf_APL_Amt"));
+    safeCheck(form, "GCPWD_Trf_FYPNewB", getChecked("GCPWD_Trf_FYPNewB"));
+    safeCheck(form, "GCPWD_Trf_TopUp", getChecked("GCPWD_Trf_TopUp"));
+    safeCheck(form, "GCPWD_Trf_Loan", getChecked("GCPWD_Trf_Loan"));
+    safeCheck(form, "GCPWD_Trf_APL", getChecked("GCPWD_Trf_APL"));
+    safeCheck(form, "GCPWD_Trf_Premium", getChecked("GCPWD_Trf_Premium"));
 
     // E-Banking details
-    safeSetText(form, "ILWD_EBank_AccNo", getValue("ILWD_EBank_AccNo"));
-    safeSetText(form, "ILWD_EBank_Bank", getValue("ILWD_EBank_Bank"));
-    safeSetText(form, "ILWD_EBank_Name", getValue("ILWD_EBank_Name"));
-    safeSetText(form, "ILWD_EBank_NIRC", getValue("ILWD_EBank_NIRC"));
-    safeCheck(form, "ILWD_EBank_Conventional", getChecked("ILWD_EBank_Conventional"));
-    safeCheck(form, "ILWD_EBank_Islamic", getChecked("ILWD_EBank_Islamic"));
-    safeCheck(form, "ILWD_EBank_Checkbox", getChecked("ILWD_EBank_Checkbox"));
+    safeSetText(form, "GCPWD_EBank_AccNo", getValue("GCPWD_EBank_AccNo"));
+    safeSetText(form, "GCPWD_EBank_Bank", getValue("GCPWD_EBank_Bank"));
+    safeSetText(form, "GCPWD_EBank_Name", getValue("GCPWD_EBank_Name"));
+    safeSetText(form, "GCPWD_EBank_NIRC", getValue("GCPWD_EBank_NIRC"));
+    safeCheck(form, "GCPWD_EBank_Conventional", getChecked("GCPWD_EBank_Conventional"));
+    safeCheck(form, "GCPWD_EBank_Islamic", getChecked("GCPWD_EBank_Islamic"));
+    safeCheck(form, "GCPWD_EBank_Checkbox", getChecked("GCPWD_EBank_Checkbox"));
 
     // Section C - Signing Details 
-    safeSetText(form, "ILWD_Signed_State", getValue("ILWD_Signed_State"));
-    safeSetText(form, "ILWD_Signed_Day", getValue("ILWD_Signed_Day"));
-    safeSetText(form, "ILWD_Signed_Month", getValue("ILWD_Signed_Month"));
-    safeSetText(form, "ILWD_Signed_Year", getValue("ILWD_Signed_Year"));
+    safeSetText(form, "GCPWD_Signed_State", getValue("GCPWD_Signed_State"));
+    safeSetText(form, "GCPWD_Signed_Day", getValue("GCPWD_Signed_Day"));
+    safeSetText(form, "GCPWD_Signed_Month", getValue("GCPWD_Signed_Month"));
+    safeSetText(form, "GCPWD_Signed_Year", getValue("GCPWD_Signed_Year"));
 
     // Embed Signatures (Note: 0-indexed page numbering)
     // For Page 1 use 0, Page 2 use 1, Page 3 use 2
@@ -1508,13 +1522,13 @@ async function fillPDF(templateFileName, action = 'download') {
     const url = URL.createObjectURL(blob);
 
     // 4. Construct output filename with policy number fallback
-    const policyVal = getValue("ILWD_PolicyNo");
+    const policyVal = getValue("GCPWD_PolicyNo");
     let policyNum = "NEW";
 
     if (policyVal.trim() !== "") {
       policyNum = policyVal.trim().replace(/[^a-z0-9]/gi, '_');
     } else {
-      const savedPolicy = localStorage.getItem("ILWD_PolicyNo");
+      const savedPolicy = localStorage.getItem("GCPWD_PolicyNo");
       if (savedPolicy && savedPolicy.trim() !== "") {
         policyNum = savedPolicy.trim().replace(/[^a-z0-9]/gi, '_');
       }
@@ -1548,7 +1562,6 @@ async function fillPDF(templateFileName, action = 'download') {
 
 
 /* ---------- RESET ALL DATA ---------- */
-// Function renamed to resetAllData to match HTML button onclick="resetAllData()"
 function resetAllData() {
   if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) return;
 
@@ -1651,8 +1664,7 @@ function changeStep(n) {
 document.addEventListener("DOMContentLoaded", () => {
   navigateTo(currentStep);
 });
-
-
 </script>
+
 </body>
 </html>
