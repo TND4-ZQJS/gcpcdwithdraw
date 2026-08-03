@@ -1489,11 +1489,11 @@ async function fillPDF(templateFileName, action = 'download') {
     safeCheck(form, "ILWD_EBank_Islamic", getChecked("ILWD_EBank_Islamic"));
     safeCheck(form, "ILWD_EBank_Checkbox", getChecked("ILWD_EBank_Checkbox"));
 
-    // Section C - Signing Details 
-    safeSetText(form, "ILWD_Signed_State", getValue("ILWD_Signed_State"));
-    safeSetText(form, "ILWD_Signed_Day", getValue("ILWD_Signed_Day"));
-    safeSetText(form, "ILWD_Signed_Month", getValue("ILWD_Signed_Month"));
-    safeSetText(form, "ILWD_Signed_Year", getValue("ILWD_Signed_Year"));
+    // Section C - Signing Details
+    safeSetText(form, "GCPWD_Signed_State", getValue("GCPWD_Signed_State"));
+    safeSetText(form, "GCPWD_Signed_Day", getValue("GCPWD_Signed_Day"));
+    safeSetText(form, "GCPWD_Signed_Month", getValue("GCPWD_Signed_Month"));
+    safeSetText(form, "GCPWD_Signed_Year", getValue("GCPWD_Signed_Year"));
 
     // Embed Signatures (Note: 0-indexed page numbering)
     // For Page 1 use 0, Page 2 use 1, Page 3 use 2
