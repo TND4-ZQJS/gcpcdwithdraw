@@ -1096,6 +1096,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 50);
 });  
 
+/* ---------- Mutual Exclusion Rules for GCP & CD Options ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const optionPairs = [
+    {
+      keepId: "GCPWD_GCP_Keep",
+      payoutId: "GCPWD_GCP_Payout"
+    },
+    {
+      keepId: "GCPWD_CD_Keep",
+      payoutId: "GCPWD_CD_Payout"
+    }
+  ];
+
+  // Helper to apply or clear the dimmed/disabled state
+  function toggleOptionPair(activeEl, targetEl) {
+    if (!activeEl || !targetEl) return;
+
+    if (activeEl.checked) {
+      // Lock and dim sibling
+      targetEl.disabled = true;
+      targetEl.setAttribute("tabindex", "-1");
+      const container = targetEl.closest("label") || targetEl.closest("div");
+      if (container) container.classList.add("dimmed-locked");
+    } else {
+      // Restore sibling
+      targetEl.disabled = false;
+      targetEl.removeAttribute("tabindex");
+      const container = targetEl.closest("label") || targetEl.closest("div");
+      if (container) container.classList.remove("dimmed-locked");
+    }
+  }
+
+  // Bind event listeners to each pair
+  optionPairs.forEach(({ keepId, payoutId }) => {
+    const keepEl = document.getElementById(keepId);
+    const payoutEl = document.getElementById(payoutId);
+
+    if (!keepEl || !payoutEl) return;
+
+    // Listener when "Keep with Company" changes
+    keepEl.addEventListener("change", () => {
+      toggleOptionPair(keepEl, payoutEl);
+      if (typeof saveElValue === "function") saveElValue(keepEl);
+    });
+
+    // Listener when "Payout" changes
+    payoutEl.addEventListener("change", () => {
+      toggleOptionPair(payoutEl, keepEl);
+      if (typeof saveElValue === "function") saveElValue(payoutEl);
+    });
+
+    // Sync UI states on load (useful when restoring from localStorage)
+    setTimeout(() => {
+      if (keepEl.checked) toggleOptionPair(keepEl, payoutEl);
+      if (payoutEl.checked) toggleOptionPair(payoutEl, keepEl);
+    }, 50);
+  });
+});
+
+
 /* ---------- Transfer to Policy Section & Sub-Options Engine ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const mainCB = document.getElementById("Trf_to_Other_Policy_CB");
