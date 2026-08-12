@@ -1845,6 +1845,7 @@ async function fillPDF(templateFileName, action = 'download') {
 
 
 /* ---------- RESET ALL DATA ---------- */
+ function resetAllData() {
   if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) return;
 
   // 1. Reset inputs AND remove only form field keys from localStorage
