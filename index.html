@@ -1845,15 +1845,16 @@ async function fillPDF(templateFileName, action = 'download') {
 
 
 /* ---------- RESET ALL DATA ---------- */
-// Function renamed to resetAllData to match HTML button onclick="resetAllData()"
-function resetAllData() {
   if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) return;
 
-  // Clear localStorage
-  localStorage.clear();
-
-  // Reset inputs
+  // 1. Reset inputs AND remove only form field keys from localStorage
   document.querySelectorAll("input, select, textarea").forEach(el => {
+    // Remove only this specific field's saved value
+    if (el.id) {
+      localStorage.removeItem(el.id);
+    }
+
+    // Clear the visual field
     if (el.type === "checkbox" || el.type === "radio") {
       el.checked = false;
     } else {
