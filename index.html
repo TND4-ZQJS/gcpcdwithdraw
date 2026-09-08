@@ -1873,14 +1873,32 @@ async function fillPDF(templateFileName, action = 'download') {
   if (typeof selectedFundKeys !== "undefined" && selectedFundKeys.clear) selectedFundKeys.clear();
   if (typeof createFundRow === "function") createFundRow();
 
-  // Reset Signature Previews
+   // 3. FULL SIGNATURE RESET (Storage, UI, & SignaturePad Canvas)
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "GCPWD";
+
   document.querySelectorAll("[data-sig-role]").forEach(block => {
     const role = block.dataset.sigRole;
     const previewEl = block.querySelector("[data-sig-preview]");
+    const formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
+
+    // Remove primary, secondary, and fallback localStorage signature keys
+    localStorage.removeItem(`sig_${formId}_${role}`);
+    localStorage.removeItem(`sig_${role}`);
+    localStorage.removeItem(role);
+
+    // Reset visual preview DOM
     if (previewEl) {
-      previewEl.innerHTML = `<span>Tap to Sign (${role.charAt(0).toUpperCase() + role.slice(1)})</span>`;
+      previewEl.innerHTML = `<span>Tap to Sign (${formattedRole})</span>`;
     }
   });
+
+  // Clear active canvas drawing & target reference
+  if (typeof signaturePad !== "undefined" && signaturePad) {
+    signaturePad.clear();
+  }
+  if (typeof sigTarget !== "undefined") {
+    sigTarget = null;
+  }
 
   if (typeof showSaveStatus === "function") showSaveStatus();
 }
