@@ -1805,13 +1805,13 @@ async function fillPDF(templateFileName, action = 'download') {
     const url = URL.createObjectURL(blob);
 
     // 4. Construct output filename with policy number fallback
-    const policyVal = getValue("ILWD_PolicyNo");
+    const policyVal = getValue("GCPWD_PolicyNo");
     let policyNum = "NEW";
 
     if (policyVal.trim() !== "") {
       policyNum = policyVal.trim().replace(/[^a-z0-9]/gi, '_');
     } else {
-      const savedPolicy = localStorage.getItem("ILWD_PolicyNo");
+      const savedPolicy = localStorage.getItem("GCPWD_PolicyNo");
       if (savedPolicy && savedPolicy.trim() !== "") {
         policyNum = savedPolicy.trim().replace(/[^a-z0-9]/gi, '_');
       }
